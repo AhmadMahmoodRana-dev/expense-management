@@ -9,7 +9,7 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: <HiHome size={20} />, route: "/" },
-    { name: "Projects", icon: <HiFolder size={20} />, route: "add-project" },
+    { name: "Transactions", icon: <HiFolder size={20} />, route: "/dashboard/transactions" },
     { name: "Task Board", icon: <HiCalendar size={20} />, route:"taskBoard" },
     { name: "Calendar", icon: <HiUserGroup size={20} /> ,route:"calender" },
     { name: "Reports", icon: <HiChartBar size={20} />, route:"report" },
@@ -27,7 +27,7 @@ const Sidebar = () => {
   
   return (
     <div
-      className={`flex flex-col sticky top-0 bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900 text-white md:h-screen h-[121.4vh] transition-all duration-300 ${
+      className={`flex flex-col sticky top-0 bg-gradient-to-b border-r border-r-white from-slate-900 via-purple-900 to-slate-900 text-white md:h-screen h-[121.4vh] transition-all duration-300 ${
         expanded ? "lg:w-64 lg:flex hidden w-20" : " lg:flex hidden w-20"
       }`}
     >
