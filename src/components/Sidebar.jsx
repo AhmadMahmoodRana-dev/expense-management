@@ -10,8 +10,8 @@ const Sidebar = () => {
   const menuItems = [
     { name: "Dashboard", icon: <HiHome size={20} />, route: "/" },
     { name: "Transactions", icon: <HiFolder size={20} />, route: "/dashboard/transactions" },
-    { name: "Task Board", icon: <HiCalendar size={20} />, route:"taskBoard" },
-    { name: "Calendar", icon: <HiUserGroup size={20} /> ,route:"calender" },
+    { name: "Budget", icon: <HiCalendar size={20} />, route:"/dashboard/budget" },
+    { name: "Category", icon: <HiUserGroup size={20} /> ,route:"/dashboard/category" },
     { name: "Reports", icon: <HiChartBar size={20} />, route:"report" },
   ];
 
