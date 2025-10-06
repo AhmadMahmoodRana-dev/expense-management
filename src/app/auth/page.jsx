@@ -8,7 +8,6 @@ import ForgetPasswordForm from '@/components/Auth/ForgetPasswordForm';
 
 const ExpenseAuthSystem = () => {
   const [currentPage, setCurrentPage] = useState('login');
-  const [formData, setFormData] = useState({email: '',password: '',confirmPassword: '',firstName: '',lastName: ''});
 
   const handleInputChange = (e) => {
     setFormData({
@@ -16,15 +15,6 @@ const ExpenseAuthSystem = () => {
       [e.target.name]: e.target.value
     });
   };
-
- 
-  
-  
-
-  
-
-  
- 
 
   // Navigation for demo purposes
   const Navigation = () => (
@@ -67,9 +57,9 @@ const ExpenseAuthSystem = () => {
   return (
     <div>
       <Navigation />
-      {currentPage === 'login' && <LoginForm handleInputChange={handleInputChange} formData={formData} />}
-      {currentPage === 'register' && <RegisterForm handleInputChange={handleInputChange} formData={formData} />}
-      {currentPage === 'forgot' && <ForgetPasswordForm handleInputChange={handleInputChange} formData={formData} />}
+      {currentPage === 'login' && <LoginForm setCurrentPage={setCurrentPage} />}
+      {currentPage === 'register' && <RegisterForm  setCurrentPage={setCurrentPage} />}
+      {currentPage === 'forgot' && <ForgetPasswordForm setCurrentPage={setCurrentPage} />}
     </div>
   );
 };

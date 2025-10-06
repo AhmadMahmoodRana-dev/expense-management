@@ -1,13 +1,39 @@
 import AuthLayout from "@/layouts/AuthLayout";
 import { ArrowRight, Mail } from "lucide-react";
 import AuthInputField from "./AuthInputField";
+import { useState } from "react";
 
-const ForgetPasswordForm = ({handleInputChange,formData}) => (
+const ForgetPasswordForm = ({setCurrentPage}) => {
+  // Step 1: Form state
+    const [formData, setFormData] = useState({
+      email: "",
+    });
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      if (!formData.email) {
+        alert("Please fill the email.");
+        return;
+      }
+      console.log("✅ Form submitted Register:", formData);
+  
+      setFormData({
+        email: "",
+      });
+    };
+
+  return(
     <AuthLayout 
       title="Reset Password" 
       subtitle="Enter your email to receive password reset instructions"
     >
-      <div className="space-y-6">
+      <form autoComplete="off" onSubmit={handleSubmit} className="space-y-6">
         <AuthInputField 
           icon={Mail} 
           type="email" 
@@ -56,8 +82,8 @@ const ForgetPasswordForm = ({handleInputChange,formData}) => (
             </button>
           </div>
         </div>
-      </div>
+      </form>
     </AuthLayout>
-  );
+  )};
 
   export default ForgetPasswordForm;

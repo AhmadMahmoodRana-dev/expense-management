@@ -2,19 +2,42 @@ import AuthLayout from "@/layouts/AuthLayout";
 import AuthInputField from "./AuthInputField";
 import AuthPasswordField from "./AuthPasswordField";
 import { ArrowRight, Mail } from "lucide-react";
+import { useState } from "react";
 
-const LoginForm = ({ handleInputChange, formData }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted Login:", formData);
-  };
+const LoginForm = ({setCurrentPage}) => {
+    const [formData, setFormData] = useState({
+      email: "",
+      password: "",
+    });
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+  
+    // Step 3: Handle form submit
+    const handleSubmit = (e) => {
+      e.preventDefault();
+  
+      if (!formData.email || !formData.password) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+      console.log("✅ Form submitted Register:", formData);
+      setFormData({
+        email: "",
+        password: "",
+      });
+    };
 
   return (
     <AuthLayout
       title="Welcome Back"
       subtitle="Sign in to your account to continue managing your expenses"
     >
-      <div className="space-y-6">
+      <form autoComplete="off" onSubmit={handleSubmit} className="space-y-6">
         <AuthInputField
           icon={Mail}
           type="email"
@@ -48,11 +71,7 @@ const LoginForm = ({ handleInputChange, formData }) => {
         </div>
 
         <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            handleSubmit(e);
-          }}
+          type="submit"
           className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
         >
           <span>Sign In</span>
@@ -69,7 +88,7 @@ const LoginForm = ({ handleInputChange, formData }) => {
             Sign up
           </button>
         </div>
-      </div>
+      </form>
     </AuthLayout>
   );
 };

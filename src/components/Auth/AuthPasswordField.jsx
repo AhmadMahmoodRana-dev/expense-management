@@ -24,6 +24,7 @@ const AuthPasswordField = ({
         value={formData[name] || ""}
         onChange={handleInputChange}
         required={required}
+        autoComplete="off"
         className="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50/50"
       />
       <button

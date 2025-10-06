@@ -1,66 +1,146 @@
- import AuthLayout from "@/layouts/AuthLayout";
+"use client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import AuthLayout from "@/layouts/AuthLayout";
 import AuthInputField from "./AuthInputField";
 import AuthPasswordField from "./AuthPasswordField";
-import { ArrowRight, Mail, User } from "lucide-react";
- const RegisterForm = ({handleInputChange,formData}) => (
-    <AuthLayout 
-      title="Create Account" 
+import { ArrowRight, Mail, User, Phone } from "lucide-react";
+import axios from "axios";
+import Baseurl from "@/constant/Baseurl";
+
+
+const RegisterForm = ({ setCurrentPage }) => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const router = useRouter();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    if (
+      !formData.email ||
+      !formData.password ||
+      !formData.firstName ||
+      !formData.lastName
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    console.log("✅ Form submitted Register:", formData);
+    const response = await axios.post(`${Baseurl}auth/register`, formData);
+
+    console.log("Registration successful:", response.data);
+
+    // ✅ Store token in localStorage
+    const token = response.data.token;
+    if (token) {
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 7); // expires in 7 days
+
+      const authData = {
+        token,
+        user: response.data.user,
+        expiry: expiry.getTime(),
+      };
+
+      localStorage.setItem("authData", JSON.stringify(authData));
+      console.log("✅ Token saved to localStorage for 7 days");
+    }
+
+    // ✅ Clear form
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+    });
+
+    // Optionally navigate to login or dashboard
+    router.push("/dashboard");
+
+  } catch (error) {
+    console.error("Error during registration:", error);
+    alert(error.response?.data?.message || "Registration failed. Try again.");
+  }
+};
+
+
+  return (
+    <AuthLayout
+      title="Create Account"
       subtitle="Join thousands of users managing their expenses smarter"
     >
-      <div className="space-y-6">
+      <form autoComplete="off" onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
-          <AuthInputField 
-            icon={User} 
-            placeholder="First name" 
-            name="firstName" 
+          <AuthInputField
+            icon={User}
+            placeholder="First name"
+            name="firstName"
             handleInputChange={handleInputChange}
             formData={formData}
           />
-          <AuthInputField 
-            icon={User} 
-            placeholder="Last name" 
-            name="lastName" 
+          <AuthInputField
+            icon={User}
+            placeholder="Last name"
+            name="lastName"
             handleInputChange={handleInputChange}
             formData={formData}
           />
         </div>
-        
-        <AuthInputField 
-          icon={Mail} 
-          type="email" 
-          placeholder="Enter your email" 
+
+        <AuthInputField
+          icon={Mail}
+          type="email"
+          placeholder="Enter your email"
           name="email"
-          handleInputChange={handleInputChange} 
-          formData={formData}
-        />
-        
-        <AuthPasswordField 
-          placeholder="Create password" 
-          name="password" 
-          handleInputChange={handleInputChange}
-          formData={formData}
-        />
-        
-        <AuthPasswordField 
-          placeholder="Confirm password" 
-          name="confirmPassword" 
           handleInputChange={handleInputChange}
           formData={formData}
         />
 
-        <div className="flex items-start">
-          <input 
-            type="checkbox" 
-            required
-            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 mt-1" 
-          />
-          <label className="ml-3 text-sm text-gray-600">
-            I agree to the{' '}
-            <a href="#" className="text-indigo-600 hover:text-indigo-800">Terms of Service</a>
-            {' '}and{' '}
-            <a href="#" className="text-indigo-600 hover:text-indigo-800">Privacy Policy</a>
-          </label>
-        </div>
+        <AuthInputField
+          icon={Phone}
+          type="number"
+          placeholder="Enter your phone number"
+          name="phone"
+          handleInputChange={handleInputChange}
+          formData={formData}
+        />
+
+        <AuthPasswordField
+          placeholder="Create password"
+          name="password"
+          handleInputChange={handleInputChange}
+          formData={formData}
+        />
+
+        <AuthPasswordField
+          placeholder="Confirm password"
+          name="confirmPassword"
+          handleInputChange={handleInputChange}
+          formData={formData}
+        />
 
         <button
           type="submit"
@@ -72,16 +152,17 @@ import { ArrowRight, Mail, User } from "lucide-react";
 
         <div className="text-center">
           <span className="text-gray-600">Already have an account? </span>
-          <button 
+          <button
             type="button"
-            onClick={() => setCurrentPage('login')}
+            onClick={() => setCurrentPage("login")}
             className="text-indigo-600 hover:text-indigo-800 font-medium"
           >
             Sign in
           </button>
         </div>
-      </div>
+      </form>
     </AuthLayout>
   );
+};
 
-  export default RegisterForm;
+export default RegisterForm;
