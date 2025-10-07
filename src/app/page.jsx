@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import * as THREE from 'three';
 
 export default function Home() {
-  const [isChecking, setIsChecking] = useState(true);
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -142,23 +141,23 @@ export default function Home() {
             return null;
           }
 
-          return authData.token;
+          return authData?.user?.isVerified;
         } catch (error) {
           return null;
         }
       };
 
-      const token = getStoredToken();
+      const isVerified = getStoredToken();
       const elapsed = Date.now() - startTime;
       const remainingTime = Math.max(0, minDisplayTime - elapsed);
 
       await new Promise(resolve => setTimeout(resolve, remainingTime));
 
-      if (token) {
-        console.log("✅ Valid token found, redirecting to dashboard");
+      if (isVerified) {
+        console.log("✅ You are Verifed Successfully, redirecting to dashboard");
         redirect("/dashboard");
       } else {
-        console.log("❌ No valid token, redirecting to auth");
+        console.log("❌ Your are not Verified, redirecting to auth");
         redirect("/auth");
       }
     };

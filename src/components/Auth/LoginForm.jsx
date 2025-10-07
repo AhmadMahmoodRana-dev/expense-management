@@ -3,34 +3,56 @@ import AuthInputField from "./AuthInputField";
 import AuthPasswordField from "./AuthPasswordField";
 import { ArrowRight, Mail } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import Baseurl from "@/constant/Baseurl";
 
-const LoginForm = ({setCurrentPage}) => {
-    const [formData, setFormData] = useState({
-      email: "",
-      password: "",
-    });
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    };
-  
-    // Step 3: Handle form submit
-    const handleSubmit = (e) => {
-      e.preventDefault();
-  
+const LoginForm = ({ setCurrentPage }) => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({email: "",password: ""});
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  // Step 3: Handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
       if (!formData.email || !formData.password) {
         alert("Please fill in all required fields.");
         return;
       }
-      console.log("✅ Form submitted Register:", formData);
-      setFormData({
-        email: "",
-        password: "",
-      });
-    };
+      const response = await axios.post(`${Baseurl}/users/login`, formData);
+      console.log("Login successful:", response.data);
+
+      // ✅ Store token in localStorage
+      const token = response.data.token;
+
+      if (token) {
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + 7);
+
+        const authData = {
+          token,
+          user: response.data.user,
+          expiry: expiry.getTime(),
+        };
+
+        localStorage.setItem("authData", JSON.stringify(authData));
+        console.log("✅ Token saved to localStorage for 7 days");
+      }
+      // ✅ Clear form
+      setFormData({email: "",password: ""});
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert(error.response?.data?.message || "Login failed. Try again.");
+    }
+  };
 
   return (
     <AuthLayout

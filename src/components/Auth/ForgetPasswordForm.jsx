@@ -2,43 +2,52 @@ import AuthLayout from "@/layouts/AuthLayout";
 import { ArrowRight, Mail } from "lucide-react";
 import AuthInputField from "./AuthInputField";
 import { useState } from "react";
+import axios from "axios";
+import Baseurl from "@/constant/Baseurl";
 
-const ForgetPasswordForm = ({setCurrentPage}) => {
+const ForgetPasswordForm = ({ setCurrentPage }) => {
   // Step 1: Form state
-    const [formData, setFormData] = useState({
-      email: "",
-    });
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    };
-    const handleSubmit = (e) => {
-      e.preventDefault();
+  const [formData, setFormData] = useState({
+    email: "",
+  });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
       if (!formData.email) {
         alert("Please fill the email.");
         return;
       }
-      console.log("✅ Form submitted Register:", formData);
-  
+      const response = await axios.post(`${Baseurl}/forgot-password`, formData);
+      console.log("Response from server:", response.data);
+      alert("If the email exists, a reset link has been sent.");
+
       setFormData({
         email: "",
       });
-    };
+    } catch (error) {
+      console.error("Error during password reset request:", error);
+      alert(error.response?.data?.message || "Request failed. Try again.");
+    }
+  };
 
-  return(
-    <AuthLayout 
-      title="Reset Password" 
+  return (
+    <AuthLayout
+      title="Reset Password"
       subtitle="Enter your email to receive password reset instructions"
     >
       <form autoComplete="off" onSubmit={handleSubmit} className="space-y-6">
-        <AuthInputField 
-          icon={Mail} 
-          type="email" 
-          placeholder="Enter your email address" 
-          name="email" 
+        <AuthInputField
+          icon={Mail}
+          type="email"
+          placeholder="Enter your email address"
+          name="email"
           handleInputChange={handleInputChange}
           formData={formData}
         />
@@ -47,7 +56,9 @@ const ForgetPasswordForm = ({setCurrentPage}) => {
           <div className="flex">
             <Mail className="w-5 h-5 text-blue-500 mt-0.5" />
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">Check your email</h3>
+              <h3 className="text-sm font-medium text-blue-800">
+                Check your email
+              </h3>
               <p className="text-sm text-blue-600 mt-1">
                 We'll send password reset instructions to your email address.
               </p>
@@ -64,18 +75,18 @@ const ForgetPasswordForm = ({setCurrentPage}) => {
         </button>
 
         <div className="text-center space-y-2">
-          <button 
+          <button
             type="button"
-            onClick={() => setCurrentPage('login')}
+            onClick={() => setCurrentPage("login")}
             className="text-indigo-600 hover:text-indigo-800 font-medium block w-full"
           >
             ← Back to Sign In
           </button>
           <div>
             <span className="text-gray-600">Don't have an account? </span>
-            <button 
+            <button
               type="button"
-              onClick={() => setCurrentPage('register')}
+              onClick={() => setCurrentPage("register")}
               className="text-indigo-600 hover:text-indigo-800 font-medium"
             >
               Sign up
@@ -84,6 +95,7 @@ const ForgetPasswordForm = ({setCurrentPage}) => {
         </div>
       </form>
     </AuthLayout>
-  )};
+  );
+};
 
-  export default ForgetPasswordForm;
+export default ForgetPasswordForm;

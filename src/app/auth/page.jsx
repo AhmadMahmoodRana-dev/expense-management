@@ -1,20 +1,11 @@
 'use client'
-
 import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, DollarSign, TrendingUp, PieChart } from 'lucide-react';
 import LoginForm from '@/components/Auth/LoginForm';
 import RegisterForm from '@/components/Auth/RegisterForm';
 import ForgetPasswordForm from '@/components/Auth/ForgetPasswordForm';
 
 const ExpenseAuthSystem = () => {
   const [currentPage, setCurrentPage] = useState('login');
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   // Navigation for demo purposes
   const Navigation = () => (
