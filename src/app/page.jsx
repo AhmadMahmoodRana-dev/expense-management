@@ -20,13 +20,13 @@ export default function Home() {
 
     // Create particle system
     const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 3000;
+    const particlesCount = 13000;
     const positions = new Float32Array(particlesCount * 3);
     const colors = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i += 3) {
       // Create a sphere distribution
-      const radius = 15;
+      const radius = 13.5;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       
@@ -69,7 +69,7 @@ export default function Home() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    camera.position.z = 25;
+    camera.position.z = 23;
 
     // Animation
     let animationId;
@@ -127,7 +127,7 @@ export default function Home() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const minDisplayTime = 2000;
+      const minDisplayTime = 4000;
       const startTime = Date.now();
 
       const getStoredToken = () => {

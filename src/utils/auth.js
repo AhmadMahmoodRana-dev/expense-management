@@ -1,4 +1,3 @@
-// utils/auth.js
 
 /**
  * Get authentication data from localStorage

@@ -109,7 +109,7 @@ const Sidebar = () => {
       </div>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-[#fff] flex items-center">
+      <a href="/dashboard/profile" className="p-4 border-t border-[#fff] flex items-center">
         <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 flex-shrink-0" />
         <div
           className={`ml-3 overflow-hidden transition-all ${
@@ -125,7 +125,7 @@ const Sidebar = () => {
         >
           <HiLogout size={20} />
         </button>
-      </div>
+      </a>
     </div>
   );
 };
