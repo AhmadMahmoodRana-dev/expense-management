@@ -1,18 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import {HiHome,HiFolder,HiCalendar,HiUserGroup,HiCog,HiChartBar,HiQuestionMarkCircle,HiLogout,HiChevronLeft} from "react-icons/hi";
+import { getCurrentUser } from "@/utils/auth";
+import { useEffect, useState } from "react";
+import {
+  HiHome,
+  HiFolder,
+  HiCalendar,
+  HiUserGroup,
+  HiCog,
+  HiChartBar,
+  HiQuestionMarkCircle,
+  HiLogout,
+  HiChevronLeft,
+} from "react-icons/hi";
 
 const Sidebar = () => {
   const [expanded, setExpanded] = useState(true);
   const [activeItem, setActiveItem] = useState("Dashboard");
+  const [authData, setAuthData] = useState(null);
+  const [isMounted, setIsMounted] = useState(false); // 👈 new flag
+
+  useEffect(() => {
+    setIsMounted(true);
+    const user = getCurrentUser();
+    if (user) setAuthData(user);
+  }, []);
 
   const menuItems = [
     { name: "Dashboard", icon: <HiHome size={20} />, route: "/" },
     { name: "Transactions", icon: <HiFolder size={20} />, route: "/dashboard/transactions" },
-    { name: "Budget", icon: <HiCalendar size={20} />, route:"/dashboard/budget" },
-    { name: "Category", icon: <HiUserGroup size={20} /> ,route:"/dashboard/category" },
-    { name: "Reports", icon: <HiChartBar size={20} />, route:"report" },
+    { name: "Budget", icon: <HiCalendar size={20} />, route: "/dashboard/budget" },
+    { name: "Category", icon: <HiUserGroup size={20} />, route: "/dashboard/category" },
+    { name: "Reports", icon: <HiChartBar size={20} />, route: "report" },
   ];
 
   const settingsItems = [
@@ -20,15 +39,15 @@ const Sidebar = () => {
     { name: "Help", icon: <HiQuestionMarkCircle size={20} /> },
   ];
 
-  const toggleSidebar = () => {
-    setExpanded(!expanded);
-  };
+  const toggleSidebar = () => setExpanded(!expanded);
 
-  
+  // 👇 avoid hydration mismatch by not rendering until mounted
+  if (!isMounted) return null;
+
   return (
     <div
       className={`flex flex-col sticky top-0 bg-gradient-to-b border-r border-r-white from-slate-900 via-purple-900 to-slate-900 text-white md:h-screen h-[121.4vh] transition-all duration-300 ${
-        expanded ? "lg:w-64 lg:flex hidden w-20" : " lg:flex hidden w-20"
+        expanded ? "lg:w-64 lg:flex hidden w-20" : "lg:flex hidden w-20"
       }`}
     >
       {/* Header */}
@@ -45,7 +64,7 @@ const Sidebar = () => {
         </div>
         <button
           onClick={toggleSidebar}
-          className={`p-1.5 rounded-lg bg-gradient-to-r from-[#261b47] to-[#571787]`}
+          className="p-1.5 rounded-lg bg-gradient-to-r from-[#261b47] to-[#571787]"
         >
           <HiChevronLeft
             size={20}
@@ -58,7 +77,7 @@ const Sidebar = () => {
       <nav className="flex-1 px-3 py-4">
         <ul className="space-y-1">
           {menuItems.map((item) => (
-            <a href={item?.route} key={item.name}>
+            <a href={item.route} key={item.name}>
               <button
                 onClick={() => setActiveItem(item.name)}
                 className={`flex items-center w-full p-3 rounded-lg transition-colors cursor-pointer ${
@@ -70,7 +89,9 @@ const Sidebar = () => {
                 <span className="flex-shrink-0 ml-1">{item.icon}</span>
                 <span
                   className={`ml-3 whitespace-nowrap transition-opacity ${
-                    expanded ? "lg:opacity-100 opacity-0 lg:relative absolute" : "opacity-0 absolute"
+                    expanded
+                      ? "lg:opacity-100 opacity-0 lg:relative absolute"
+                      : "opacity-0 absolute"
                   }`}
                 >
                   {item.name}
@@ -97,7 +118,9 @@ const Sidebar = () => {
                 <span className="flex-shrink-0 ml-1">{item.icon}</span>
                 <span
                   className={`ml-3 whitespace-nowrap transition-opacity ${
-                     expanded ? "lg:opacity-100 opacity-0 lg:relative absolute" : "opacity-0 absolute"
+                    expanded
+                      ? "lg:opacity-100 opacity-0 lg:relative absolute"
+                      : "opacity-0 absolute"
                   }`}
                 >
                   {item.name}
@@ -109,18 +132,29 @@ const Sidebar = () => {
       </div>
 
       {/* User Profile */}
-      <a href="/dashboard/profile" className="p-4 border-t border-[#fff] flex items-center">
+      <a
+        href="/dashboard/profile"
+        className="p-4 border-t border-[#fff] flex items-center"
+      >
         <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 flex-shrink-0" />
         <div
           className={`ml-3 overflow-hidden transition-all ${
             expanded ? "lg:w-40 w-0" : "w-0"
           }`}
         >
-          <p className="font-medium truncate">username</p>
+          {authData ? (
+            <p className="font-medium truncate">
+              {`${authData.firstName ?? ""} ${authData.lastName ?? ""}`}
+            </p>
+          ) : (
+            <p className="font-medium truncate text-gray-400">Loading...</p>
+          )}
         </div>
         <button
           className={`ml-auto p-2 rounded-lg hover:bg-[#261b47] transition-opacity ${
-            expanded ? "md:opacity-100 opacity-0 md:relative absolute" : "opacity-0 absolute"
+            expanded
+              ? "md:opacity-100 opacity-0 md:relative absolute"
+              : "opacity-0 absolute"
           }`}
         >
           <HiLogout size={20} />
