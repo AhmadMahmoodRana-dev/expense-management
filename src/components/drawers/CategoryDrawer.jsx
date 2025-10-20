@@ -1,10 +1,72 @@
 "use client";
 
-import {Dialog,DialogBackdrop,DialogPanel,DialogTitle,TransitionChild} from "@headlessui/react";
-import {Tag,TrendingUp,TrendingDown,Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,X,Folder,FolderOpen} from "lucide-react";
-import api from "@/lib/axios";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+  TransitionChild,
+} from "@headlessui/react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAddCategoryModal,setShowAddCategoryModal,resetform}) => {
+import {
+  Tag,
+  TrendingUp,
+  TrendingDown,
+  Utensils,
+  Car,
+  Zap,
+  Film,
+  Home,
+  ShoppingCart,
+  Heart,
+  Book,
+  Plane,
+  Gift,
+  Coffee,
+  Wifi,
+  Phone,
+  Briefcase,
+  Dumbbell,
+  Music,
+  Palette,
+  Wrench,
+  Baby,
+  PawPrint,
+  Smartphone,
+  Gamepad2,
+  Pizza,
+  GraduationCap,
+  Stethoscope,
+  Bus,
+  Shirt,
+  Building2,
+  X,
+  Folder,
+  FolderOpen,
+} from "lucide-react";
+import api from "@/lib/axios";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "../ui/button";
+
+const CategoryDrawer = ({
+  fetchCategories,
+  categories,
+  formData,
+  setFormData,
+  showAddCategoryModal,
+  setShowAddCategoryModal,
+  resetform,
+}) => {
   const iconMap = {
     Utensils,
     Car,
@@ -58,7 +120,7 @@ const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAdd
   ];
   const iconOptions = Object.keys(iconMap);
 
-  console.log(formData,"FORMDATA")
+  console.log(formData, "FORMDATA");
 
   const getParentCategoryOptions = (currentCategoryId = null) => {
     const flattenCategories = (cats, level = 0) => {
@@ -97,7 +159,7 @@ const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAdd
       console.log(data), "category created";
       if (data.success === true) {
         setShowAddCategoryModal(false);
-        resetform()
+        resetform();
       }
       fetchCategories();
     } catch (err) {
@@ -241,7 +303,7 @@ const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAdd
                       <label className="text-purple-200 text-sm mb-2 block">
                         Category Name *
                       </label>
-                      <input
+                      <Input
                         type="text"
                         placeholder="e.g., Coffee Shops"
                         value={formData.name}
@@ -253,28 +315,43 @@ const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAdd
                       />
                     </div>
 
-
                     <div>
                       <label className="text-purple-200 text-sm mb-2 block">
                         Parent Category (Optional)
                       </label>
-                      <select
-                        value={formData.parentCategory}
-                        onChange={(e) =>
+
+                      <Select
+                        value={formData.parentCategory || "none"}
+                        onValueChange={(value) =>
                           setFormData({
                             ...formData,
-                            parentCategory: e.target.value,
+                            parentCategory:
+                              value === "none" ? undefined : value,
                           })
                         }
-                        className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
                       >
-                        <option value="">No Parent (Top Level Category)</option>
-                        {getParentCategoryOptions().map((category) => (
-                          <option key={category._id} value={category._id}>
-                            {category.name}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                          <SelectValue placeholder="No Parent (Top Level Category)" />
+                        </SelectTrigger>
+
+                        <SelectContent className="bg-[#2c1c4f] border border-white/20 text-white  rounded-xl">
+                          <SelectGroup>
+                            <SelectLabel>Categories</SelectLabel>
+                            <SelectItem value="none">
+                              No Parent (Top Level Category)
+                            </SelectItem>
+                            {getParentCategoryOptions().map((category) => (
+                              <SelectItem
+                                key={category._id}
+                                value={category._id}
+                              >
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+
                       <p className="text-gray-400 text-xs mt-1">
                         Select a parent category to make this a subcategory
                       </p>
@@ -334,7 +411,7 @@ const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAdd
                       <label className="text-purple-200 text-sm mb-2 block">
                         Description (Optional)
                       </label>
-                      <textarea
+                      <Textarea
                         placeholder="Brief description..."
                         value={formData.description}
                         onChange={(e) =>
@@ -349,7 +426,7 @@ const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAdd
                     </div>
 
                     <div className="pt-4 flex gap-3">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => {
                           setShowAddModal(false);
@@ -357,13 +434,13 @@ const CategoryDrawer = ({fetchCategories,categories,formData,setFormData,showAdd
                         className="flex-1 bg-white/5 hover:bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl transition-all"
                       >
                         Cancel
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="submit"
                         className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-purple-500/50"
                       >
                         Create Category
-                      </button>
+                      </Button>
                     </div>
                   </form>
                 </div>
