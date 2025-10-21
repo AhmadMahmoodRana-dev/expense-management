@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {TrendingUp, TrendingDown, PieChart, Calendar, Plus, X, Receipt, ArrowRightLeft, Wallet, PiggyBank, Bell } from 'lucide-react';
+import { Context } from '@/context/Context';
+import { darkBackground, darkTextColor, mainBackground } from '@/color/DarkMode';
+import { lightBackground, lightTextColor } from '@/color/LightMode';
 
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([
@@ -36,6 +39,9 @@ const Dashboard = () => {
     date: '',
     type: 'expense'
   });
+  const {themeColor} =  useContext(Context)
+
+  console.log("THEME COLOR",themeColor)
 
   const totalIncome = expenses.filter(e => e.type === 'income').reduce((sum, e) => sum + e.amount, 0);
   const totalExpense = expenses.filter(e => e.type === 'expense').reduce((sum, e) => sum + e.amount, 0);
@@ -81,22 +87,22 @@ const Dashboard = () => {
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className={`min-h-screen  p-6 ${themeColor == "dark" ? darkBackground : lightBackground}` }>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Financial Dashboard</h1>
-            <p className="text-purple-200">Complete overview of your financial health</p>
+            <h1 className={`text-4xl font-bold ${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} mb-2`}>Financial Dashboard</h1>
+            <p className={`${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`}`}>Complete overview of your financial health</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl px-4 py-2 border border-white/20">
-            <p className="text-gray-300 text-sm">September 2025</p>
+          <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 `: `bg-gray-200 text-gray-500`} backdrop-blur-lg rounded-xl px-4 py-2 border`}>
+            <p className={`text-sm`}>September 2025</p>
           </div>
         </div>
 
         {/* Summary Cards - 4 Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
+          <div className={`${themeColor == "dark" ? `bg-white/10  hover:bg-white/15 transition-all border-white/20` : `bg-gray-200 border-gray-200`}  backdrop-blur-lg rounded-2xl p-6 border `}>
             <div className="flex items-center justify-between mb-4">
               <div className="bg-blue-500/20 p-3 rounded-xl">
                 <Wallet className="text-blue-400" size={24} />
@@ -105,35 +111,35 @@ const Dashboard = () => {
                 {balance >= 0 ? '↑' : '↓'}
               </span>
             </div>
-            <h3 className="text-gray-300 text-sm mb-1">Total Balance</h3>
-            <p className={`text-3xl font-bold ${balance >= 0 ? 'text-white' : 'text-red-400'}`}>
+            <h3 className={`${themeColor == "dark" ? `text-gray-300` : `text-gray-500`} text-sm mb-1`}>Total Balance</h3>
+            <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
               ${Math.abs(balance).toFixed(2)}
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
+          <div className={`${themeColor == "dark" ? `bg-white/10  hover:bg-white/15 transition-all border-white/20` : `bg-gray-200 border-gray-200`}  backdrop-blur-lg rounded-2xl p-6 border `}>
             <div className="flex items-center justify-between mb-4">
               <div className="bg-green-500/20 p-3 rounded-xl">
                 <TrendingUp className="text-green-400" size={24} />
               </div>
               <span className="text-green-400 text-sm font-semibold">+12.5%</span>
             </div>
-            <h3 className="text-gray-300 text-sm mb-1">Total Income</h3>
-            <p className="text-3xl font-bold text-white">${totalIncome.toFixed(2)}</p>
+            <h3 className={`${themeColor == "dark" ? `text-gray-300` : `text-gray-500`} text-sm mb-1`}>Total Income</h3>
+            <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>${totalIncome.toFixed(2)}</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
+          <div className={`${themeColor == "dark" ? `bg-white/10  hover:bg-white/15 transition-all border-white/20` : `bg-gray-200 border-gray-200`}  backdrop-blur-lg rounded-2xl p-6 border `}>
             <div className="flex items-center justify-between mb-4">
               <div className="bg-red-500/20 p-3 rounded-xl">
                 <TrendingDown className="text-red-400" size={24} />
               </div>
               <span className="text-red-400 text-sm font-semibold">-8.3%</span>
             </div>
-            <h3 className="text-gray-300 text-sm mb-1">Total Expenses</h3>
-            <p className="text-3xl font-bold text-white">${totalExpense.toFixed(2)}</p>
+            <h3 className={`${themeColor == "dark" ? `text-gray-300` : `text-gray-500`} text-sm mb-1`}>Total Expenses</h3>
+            <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>${totalExpense.toFixed(2)}</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all">
+          <div className={`${themeColor == "dark" ? `bg-white/10  hover:bg-white/15 transition-all border-white/20` : `bg-gray-200 border-gray-200`}  backdrop-blur-lg rounded-2xl p-6 border `}>
             <div className="flex items-center justify-between mb-4">
               <div className="bg-purple-500/20 p-3 rounded-xl">
                 <PiggyBank className="text-purple-400" size={24} />
@@ -142,7 +148,7 @@ const Dashboard = () => {
                 This Month
               </span>
             </div>
-            <h3 className="text-gray-300 text-sm mb-1">Savings</h3>
+            <h3 className={`${themeColor == "dark" ? `text-gray-300` : `text-gray-500`} text-sm mb-1`}>Savings</h3>
             <p className={`text-3xl font-bold ${savings >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               ${Math.abs(savings).toFixed(2)}
             </p>
@@ -150,27 +156,27 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions Bar */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 mb-6">
+        <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 ` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-4 border  mb-6`}>
           <div className="flex flex-wrap gap-3 justify-center md:justify-start">
             <button 
               onClick={() => openModal('income')}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl transition-all hover:scale-105"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#261b47] to-[#571787] text-white px-6 py-3 rounded-xl transition-all hover:scale-105"
             >
               <Plus size={20} />
               Add Income
             </button>
             <button 
               onClick={() => openModal('expense')}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl transition-all hover:scale-105"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#261b47] to-[#571787] text-white px-6 py-3 rounded-xl transition-all hover:scale-105"
             >
               <Plus size={20} />
               Add Expense
             </button>
-            <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-all hover:scale-105">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-[#261b47] to-[#571787] text-white px-6 py-3 rounded-xl transition-all hover:scale-105">
               <ArrowRightLeft size={20} />
               Add Transfer
             </button>
-            <button className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl transition-all hover:scale-105">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-[#261b47] to-[#571787] text-white px-6 py-3 rounded-xl transition-all hover:scale-105">
               <Receipt size={20} />
               Scan Receipt
             </button>
@@ -180,24 +186,24 @@ const Dashboard = () => {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Income vs Expense Chart Placeholder */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <h2 className="text-2xl font-bold text-white mb-4">Income vs Expense Trend</h2>
+          <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 ` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border`}>
+            <h2 className={`text-2xl font-bold ${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} mb-2`}>Income vs Expense Trend</h2>
             <div className="h-64 flex items-center justify-center">
               <div className="text-center">
                 <div className="mb-4">
                   <TrendingUp size={48} className="mx-auto text-purple-400" />
                 </div>
-                <p className="text-gray-300 mb-2">6-Month Financial Trend</p>
-                <p className="text-sm text-gray-500">Line chart showing income and expense patterns</p>
+                <p className={`${themeColor == "dark" ? "text-gray-300":"text-gray-600"} `}>6-Month Financial Trend</p>
+                <p className={`${themeColor == "dark" ? "text-gray-300":"text-gray-600"} text-sm `}>Line chart showing income and expense patterns</p>
               </div>
             </div>
           </div>
 
           {/* Expense by Category Chart */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+          <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 ` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border`}>
             <div className="flex items-center gap-2 mb-4">
               <PieChart className="text-purple-400" size={24} />
-              <h2 className="text-2xl font-bold text-white">Expenses by Category</h2>
+              <h2 className={`text-2xl font-bold ${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} mb-2`}>Expenses by Category</h2>
             </div>
             <div className="space-y-4">
               {Object.entries(categoryTotals).map(([category, amount]) => {
@@ -205,8 +211,8 @@ const Dashboard = () => {
                 return (
                   <div key={category}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-gray-300">{category}</span>
-                      <span className="text-white font-semibold">${amount.toFixed(2)}</span>
+                      <span className={`${themeColor == "dark" ? "text-gray-300":"text-gray-600"} `}>{category}</span>
+                      <span className={`font-semibold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>${amount.toFixed(2)}</span>
                     </div>
                     <div className="bg-white/10 rounded-full h-2 overflow-hidden">
                       <div
@@ -225,9 +231,9 @@ const Dashboard = () => {
         {/* Middle Row: Recent Transactions & Budget Overview */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Recent Transactions */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+          <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 ` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border`}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Recent Transactions</h2>
+              <h2 className={`text-2xl font-bold ${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} mb-2`}>Recent Transactions</h2>
               <button className="text-purple-400 hover:text-purple-300 text-sm font-semibold transition-colors">
                 View All →
               </button>
@@ -268,8 +274,8 @@ const Dashboard = () => {
           </div>
 
           {/* Budget Overview */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <h2 className="text-2xl font-bold text-white mb-6">Budget Overview</h2>
+          <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 ` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border `}>
+            <h2 className={`text-2xl font-bold ${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} mb-6`}>Budget Overview</h2>
             <div className="space-y-5">
               {budgets.map((budget) => {
                 const percentage = (budget.spent / budget.budget) * 100;
@@ -313,7 +319,7 @@ const Dashboard = () => {
         </div>
 
         {/* Upcoming Bills Section */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+        <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 ` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border `}>
           <div className="flex items-center gap-2 mb-6">
             <Calendar className="text-purple-400" size={24} />
             <h2 className="text-2xl font-bold text-white">Upcoming Bills</h2>

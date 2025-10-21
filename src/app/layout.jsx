@@ -1,3 +1,4 @@
+import ContextProvider from "@/context/Context";
 import "./globals.css";
 
 export const metadata = {
@@ -9,7 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <ContextProvider>{children}</ContextProvider>
       </body>
     </html>
   );

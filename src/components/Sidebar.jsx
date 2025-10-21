@@ -1,7 +1,10 @@
 "use client";
 
+import { darkBackground, darkBorder, darkTextColor } from "@/color/DarkMode";
+import { lightBackground, lightBorder, lightTextColor } from "@/color/LightMode";
+import { Context } from "@/context/Context";
 import { getCurrentUser } from "@/utils/auth";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   HiHome,
   HiFolder,
@@ -18,7 +21,8 @@ const Sidebar = () => {
   const [expanded, setExpanded] = useState(true);
   const [activeItem, setActiveItem] = useState("Dashboard");
   const [authData, setAuthData] = useState(null);
-  const [isMounted, setIsMounted] = useState(false); // 👈 new flag
+  const [isMounted, setIsMounted] = useState(false);
+  const {themeColor} = useContext(Context)
 
   useEffect(() => {
     setIsMounted(true);
@@ -28,9 +32,21 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: <HiHome size={20} />, route: "/" },
-    { name: "Transactions", icon: <HiFolder size={20} />, route: "/dashboard/transactions" },
-    { name: "Budget", icon: <HiCalendar size={20} />, route: "/dashboard/budget" },
-    { name: "Category", icon: <HiUserGroup size={20} />, route: "/dashboard/category" },
+    {
+      name: "Transactions",
+      icon: <HiFolder size={20} />,
+      route: "/dashboard/transactions",
+    },
+    {
+      name: "Budget",
+      icon: <HiCalendar size={20} />,
+      route: "/dashboard/budget",
+    },
+    {
+      name: "Category",
+      icon: <HiUserGroup size={20} />,
+      route: "/dashboard/category",
+    },
     { name: "Reports", icon: <HiChartBar size={20} />, route: "report" },
   ];
 
@@ -46,12 +62,12 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`flex flex-col sticky top-0 bg-gradient-to-b border-r border-r-white from-slate-900 via-purple-900 to-slate-900 text-white md:h-screen h-[121.4vh] transition-all duration-300 ${
+      className={`flex flex-col sticky top-0  border-r ${themeColor == "dark" ? `${darkBorder} ${darkBackground} ${darkTextColor}` : `${lightBorder} ${lightBackground} ${lightTextColor}`}  md:h-screen h-[121.4vh] transition-all duration-300 ${
         expanded ? "lg:w-64 lg:flex hidden w-20" : "lg:flex hidden w-20"
       }`}
     >
       {/* Header */}
-      <div className="p-4 pb-2 flex justify-between items-center border-b border-[#fff]">
+      <div className={` p-4 pb-2 flex justify-between items-center border-b ${themeColor == "dark" ? darkBorder : lightBorder} `}>
         <div
           className={`flex items-center overflow-hidden transition-all ${
             expanded ? "lg:w-44 w-0" : "w-0"
@@ -82,13 +98,13 @@ const Sidebar = () => {
                 onClick={() => setActiveItem(item.name)}
                 className={`flex items-center w-full p-3 rounded-lg transition-colors cursor-pointer ${
                   activeItem === item.name
-                    ? "bg-white text-indigo-800 shadow-md"
-                    : "hover:bg-slate-900"
+                    ? ` ${themeColor == "dark" ? `${darkTextColor} bg-white/10` : `${lightTextColor} bg-gray-200`} `
+                    : ` ${themeColor == "dark" ? `${darkTextColor} hover:bg-white/10` : `${lightTextColor} hover:bg-gray-200`}`
                 }`}
               >
                 <span className="flex-shrink-0 ml-1">{item.icon}</span>
                 <span
-                  className={`ml-3 whitespace-nowrap transition-opacity ${
+                  className={`ml-3  transition-opacity ${
                     expanded
                       ? "lg:opacity-100 opacity-0 lg:relative absolute"
                       : "opacity-0 absolute"
@@ -103,7 +119,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Settings Navigation */}
-      <div className="px-3 py-4 border-t border-[#fff]">
+      <div className="px-3 py-4 border-t border-white/40">
         <ul className="space-y-1">
           {settingsItems.map((item) => (
             <li key={item.name}>
@@ -112,7 +128,7 @@ const Sidebar = () => {
                 className={`flex items-center w-full p-3 rounded-lg transition-colors ${
                   activeItem === item.name
                     ? "bg-white text-indigo-800 shadow-md"
-                    : "hover:bg-slate-900"
+                    : ` ${themeColor == "dark" ? `${darkTextColor} hover:bg-white/10` : `${lightTextColor} hover:bg-gray-200`}`
                 }`}
               >
                 <span className="flex-shrink-0 ml-1">{item.icon}</span>
@@ -134,9 +150,9 @@ const Sidebar = () => {
       {/* User Profile */}
       <a
         href="/dashboard/profile"
-        className="p-4 border-t border-[#fff] flex items-center"
+        className="p-4 border-t border-white/40 flex items-center"
       >
-        <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 flex-shrink-0" />
+        <div className={`border-2 border-dashed rounded-xl w-10 h-10 flex-shrink-0`} />
         <div
           className={`ml-3 overflow-hidden transition-all ${
             expanded ? "lg:w-40 w-0" : "w-0"
