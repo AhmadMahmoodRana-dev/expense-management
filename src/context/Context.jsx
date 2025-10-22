@@ -4,7 +4,7 @@ import { createContext,useState} from "react";
 export const Context = createContext();
 const ContextProvider = (props) => {
 
-const [themeColor,setThemeColor] = useState("light")
+const [themeColor,setThemeColor] = useState("dark")
 
 
 

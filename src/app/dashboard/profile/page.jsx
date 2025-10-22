@@ -67,7 +67,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-black py-8 px-4 sm:px-6 lg:px-8">
       <div className="w-full mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -82,7 +82,7 @@ const ProfilePage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg p-6 mb-6">
               {/* Profile Card */}
               <div className="text-center">
                 <div className="relative inline-block mb-4">
@@ -133,11 +133,11 @@ const ProfilePage = () => {
 
                 {/* Quick Stats */}
                 <div className="mt-6 grid grid-cols-2 gap-4 text-center">
-                  <div className="bg-green-50 rounded-lg p-3">
+                  <div className="border border-white/20 rounded-lg p-3">
                     <div className="text-green-600 font-bold">$2,847</div>
                     <div className="text-xs text-gray-500">Monthly Budget</div>
                   </div>
-                  <div className="bg-blue-50 rounded-lg p-3">
+                  <div className="border border-white/20 rounded-lg p-3">
                     <div className="text-blue-600 font-bold">$1,234</div>
                     <div className="text-xs text-gray-500">
                       Spent This Month
@@ -148,7 +148,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="bg-white rounded-2xl shadow-lg p-4">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg p-4">
               <nav className="space-y-2">
                 <button
                   onClick={() => setActiveTab("personal")}
@@ -220,7 +220,7 @@ const ProfilePage = () => {
               </div>
 
               {/* Content */}
-              <div className="p-6 bg-white">
+              <div className="p-6 bg-white/10 backdrop-blur-lg">
                 <div className="space-y-8">
                   {/* Personal Information Form */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -252,7 +252,7 @@ const ProfilePage = () => {
                           required
                         />
                       ) : (
-                        <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="px-4 py-3  rounded-xl border border-white/20">
                           {profile.firstName}
                         </div>
                       )}
@@ -286,7 +286,7 @@ const ProfilePage = () => {
                           required
                         />
                       ) : (
-                        <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="px-4 py-3 border border-white/20 rounded-xl">
                           {profile.lastName}
                         </div>
                       )}
@@ -320,7 +320,7 @@ const ProfilePage = () => {
                           required
                         />
                       ) : (
-                        <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="px-4 py-3 border border-white/20 rounded-xl">
                           {profile.phone}
                         </div>
                       )}
@@ -353,7 +353,7 @@ const ProfilePage = () => {
                           className="w-full rounded-xl"
                         />
                       ) : (
-                        <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="px-4 py-3 border border-white/20 rounded-xl">
                           {profile.dateOfBirth}
                         </div>
                       )}
@@ -416,7 +416,7 @@ const ProfilePage = () => {
                           </SelectContent>
                         </Select>
                       ) : (
-                        <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="px-4 py-3 border border-white/20 rounded-xl">
                           {profile.currency}
                         </div>
                       )}
@@ -464,7 +464,7 @@ const ProfilePage = () => {
                           </SelectContent>
                         </Select>
                       ) : (
-                        <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="px-4 py-3 border border-white/20 rounded-xl">
                           {profile.language}
                         </div>
                       )}
@@ -537,7 +537,7 @@ const ProfilePage = () => {
                           </SelectContent>
                         </Select>
                       ) : (
-                        <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
+                        <div className="px-4 py-3 border border-white/20 rounded-xl">
                           {profile.timezone}
                         </div>
                       )}
