@@ -3,7 +3,7 @@
 import React, { useContext, useState } from 'react';
 import {TrendingUp, TrendingDown, PieChart, Calendar, Plus, X, Receipt, ArrowRightLeft, Wallet, PiggyBank, Bell } from 'lucide-react';
 import { Context } from '@/context/Context';
-import { darkBackground, darkTextColor, mainBackground } from '@/color/DarkMode';
+import { darkBackground, darkTextColor } from '@/color/DarkMode';
 import { lightBackground, lightTextColor } from '@/color/LightMode';
 
 const Dashboard = () => {

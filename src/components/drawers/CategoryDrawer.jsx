@@ -57,6 +57,10 @@ import api from "@/lib/axios";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
+import { darkBackground } from "@/color/DarkMode";
+import { lightBackground } from "@/color/LightMode";
+import { useContext } from "react";
+import { Context } from "@/context/Context";
 
 const CategoryDrawer = ({
   fetchCategories,
@@ -119,6 +123,8 @@ const CategoryDrawer = ({
     "slate",
   ];
   const iconOptions = Object.keys(iconMap);
+    const {themeColor} =  useContext(Context)
+  
 
   console.log(formData, "FORMDATA");
 
@@ -289,7 +295,7 @@ const CategoryDrawer = ({
                     </button>
                   </div>
                 </TransitionChild>
-                <div className="relative flex h-full flex-col overflow-y-auto bg-gradient-to-br from-slate-900 to-purple-900 py-6 shadow-xl after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-white/10">
+                <div className={`relative flex h-full flex-col overflow-y-auto  ${themeColor == "dark" ? darkBackground : `bg-gray-400`} py-6 shadow-xl after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-white/10`}>
                   <div className="px-6 sm:px-10">
                     <DialogTitle className="text-2xl font-bold text-white">
                       Add New Category
@@ -300,7 +306,7 @@ const CategoryDrawer = ({
                     className="px-4 space-y-4"
                   >
                     <div>
-                      <label className="text-purple-200 text-sm mb-2 block">
+                      <label className="text-white text-sm mb-2 block">
                         Category Name *
                       </label>
                       <Input
@@ -316,7 +322,7 @@ const CategoryDrawer = ({
                     </div>
 
                     <div>
-                      <label className="text-purple-200 text-sm mb-2 block">
+                      <label className="text-white text-sm mb-2 block">
                         Parent Category (Optional)
                       </label>
 
@@ -358,7 +364,7 @@ const CategoryDrawer = ({
                     </div>
 
                     <div>
-                      <label className="text-purple-200 text-sm mb-2 block">
+                      <label className="text-white text-sm mb-2 block">
                         Icon *
                       </label>
                       <div className="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto p-2 bg-white/5 rounded-xl">
@@ -383,7 +389,7 @@ const CategoryDrawer = ({
                     </div>
 
                     <div>
-                      <label className="text-purple-200 text-sm mb-2 block">
+                      <label className="text-white text-sm mb-2 block">
                         Color *
                       </label>
                       <div className="grid grid-cols-7 gap-2">
@@ -408,7 +414,7 @@ const CategoryDrawer = ({
                     </div>
 
                     <div>
-                      <label className="text-purple-200 text-sm mb-2 block">
+                      <label className="text-white text-sm mb-2 block">
                         Description (Optional)
                       </label>
                       <Textarea

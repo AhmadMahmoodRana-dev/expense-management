@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {Plus,Edit2,Trash2,Lock,Tag,TrendingUp,TrendingDown,Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,X,Loader2,AlertCircle,CheckCircle,ChevronDown,ChevronRight,Folder,FolderOpen} from "lucide-react";
 import api from "@/lib/axios";
 import CategoryDrawer from "@/components/drawers/CategoryDrawer";
+import { darkBackground, darkTextColor } from "@/color/DarkMode";
+import { lightBackground, lightTextColor } from "@/color/LightMode";
+import { Context } from "@/context/Context";
 
 const CategoriesPage = () => {
+  const {themeColor} =  useContext(Context)
   const [activeTab, setActiveTab] = useState("expense");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
@@ -350,7 +354,7 @@ const CategoriesPage = () => {
   const customCategories = categories.filter((c) => !c.isDefault);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className={`min-h-screen ${themeColor == "dark" ? darkBackground : lightBackground} p-6`}>
       <div className="max-w-7xl mx-auto">
         {/* Success/Error Messages */}
         {success && (
@@ -371,8 +375,8 @@ const CategoriesPage = () => {
         <div className="mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Categories</h1>
-              <p className="text-purple-200">
+              <h1 className={`text-4xl font-bold ${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} mb-2`}>Categories</h1>
+              <p className={`${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`}`}>
                 Manage your expense and income categories with subcategories
               </p>
             </div>
@@ -386,13 +390,13 @@ const CategoriesPage = () => {
           </div>
 
           {/* Tab Switcher */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-2 border border-white/20 inline-flex gap-2">
+          <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 `: `bg-gray-200 text-gray-500`} backdrop-blur-lg rounded-2xl p-2 border border-white/20 inline-flex gap-2`}>
             <button
               onClick={() => setActiveTab("expense")}
               className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
                 activeTab === "expense"
                   ? "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg"
-                  : "text-purple-200 hover:text-white hover:bg-white/5"
+                  : `${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`}  hover:bg-white/5`
               }`}
             >
               <TrendingDown size={20} />
@@ -403,7 +407,7 @@ const CategoriesPage = () => {
               className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
                 activeTab === "income"
                   ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg"
-                  : "text-purple-200 hover:text-white hover:bg-white/5"
+                  : `${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`}  hover:bg-white/5`
               }`}
             >
               <TrendingUp size={20} />
@@ -421,55 +425,55 @@ const CategoriesPage = () => {
           <>
             {/* Statistics Summary */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-purple-600/20 rounded-xl">
                     <Tag className="text-purple-400" size={24} />
                   </div>
                   <div>
-                    <p className="text-purple-200 text-sm">Total Categories</p>
-                    <p className="text-3xl font-bold text-white">
+                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>Total Categories</p>
+                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
                       {categories.length}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-blue-600/20 rounded-xl">
                     <Lock className="text-blue-400" size={24} />
                   </div>
                   <div>
-                    <p className="text-purple-200 text-sm">
+                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>
                       Default Categories
                     </p>
-                    <p className="text-3xl font-bold text-white">
+                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
                       {defaultCategories.length}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-green-600/20 rounded-xl">
                     <Tag className="text-green-400" size={24} />
                   </div>
                   <div>
-                    <p className="text-purple-200 text-sm">Custom Categories</p>
-                    <p className="text-3xl font-bold text-white">
+                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>Custom Categories</p>
+                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
                       {customCategories.length}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-orange-600/20 rounded-xl">
                     <Folder className="text-orange-400" size={24} />
                   </div>
                   <div>
-                    <p className="text-purple-200 text-sm">Parent Categories</p>
-                    <p className="text-3xl font-bold text-white">
+                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>Parent Categories</p>
+                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
                       {
                         categories.filter(
                           (cat) =>
@@ -533,16 +537,16 @@ const CategoriesPage = () => {
                   ))}
                 </div>
               ) : (
-                <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-12 border-2 border-dashed border-white/20 text-center">
+                <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-12 border-2 border-dashed border-white/20 text-center`}>
                   <div className="flex flex-col items-center gap-4">
                     <div className="p-4 bg-blue-600/20 rounded-full">
                       <Tag className="text-blue-400" size={48} />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white mb-2">
+                      <h3 className={`text-xl font-bold ${themeColor== "dark" ? `text-white` : "text-black" }  mb-2`}>
                         No Custom Categories Yet
                       </h3>
-                      <p className="text-purple-200 mb-4">
+                      <p className={` mb-4 ${themeColor== "dark" ? `text-white` : "text-black" }`}>
                         Create your first custom category to get started
                       </p>
                       <button
