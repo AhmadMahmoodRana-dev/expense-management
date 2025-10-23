@@ -166,7 +166,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="relative w-full h-screen overflow-hidden bg-black">
       {/* Three.js Canvas Container */}
       <div ref={containerRef} className="absolute inset-0" />
 

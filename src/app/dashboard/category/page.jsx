@@ -13,6 +13,7 @@ const CategoriesPage = () => {
   const [activeTab, setActiveTab] = useState("expense");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [isEdit,setIsEdit] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,15 +21,7 @@ const CategoriesPage = () => {
   const [success, setSuccess] = useState(null);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
   const iconMap = {Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingUp,TrendingDown,Tag,Folder,FolderOpen};
-  const [formData, setFormData] = useState({
-    name: "",
-    type: "expense",
-    icon: "Tag",
-    color: "purple",
-    description: "",
-    parentCategory: "",
-  });
-
+  const [formData, setFormData] = useState({name: "",type: "expense",icon: "Tag",color: "purple",description: "",parentCategory: ""});
   const resetform = () => {
     setFormData({
       name: "",
@@ -38,6 +31,23 @@ const CategoriesPage = () => {
       description: "",
       parentCategory: "",
     });
+    setIsEdit(null)
+  };
+
+  // Handle Edit
+  
+  const handleEdit = (data) => {
+    console.log(data,"EDIT DATA")
+    setFormData({
+      name: data?.name,
+      type: data?.type,
+      icon: data?.icon,
+      color: data?.color,
+      description:data?.description,
+      parentCategory: data?.parentCategory?._id,
+    });
+    setShowAddCategoryModal(!showAddCategoryModal)
+    setIsEdit(data?._id)
   };
 
   // Fetch categories with tree structure
@@ -54,7 +64,6 @@ const CategoriesPage = () => {
       setLoading(false);
     }
   };
-
   // Build hierarchical category tree
   const buildCategoryTree = (categories) => {
     const categoryMap = {};
@@ -75,7 +84,6 @@ const CategoriesPage = () => {
     });
     return roots;
   };
-
   useEffect(() => {
     fetchCategories();
   }, [activeTab]);
@@ -224,7 +232,7 @@ const CategoriesPage = () => {
     return (
       <div className="mb-2">
         <div
-          className={`bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 hover:border-${
+          className={` ${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-5 border border-white/20 hover:border-${
             category.color
           }-500/50 transition-all hover:shadow-lg hover:shadow-${
             category.color
@@ -255,6 +263,7 @@ const CategoriesPage = () => {
 
             <div className="flex items-center gap-2">
               <button
+              onClick={() => handleEdit(category)}
                 className={`p-2 rounded-lg bg-white/5 hover:bg-white/10 ${
                   isDefault
                     ? "text-purple-400 hover:text-purple-300"
@@ -282,7 +291,7 @@ const CategoriesPage = () => {
             </div>
           </div>
 
-          <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+          <h3 className={`${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} font-semibold mb-3 flex items-center gap-2`}>
             {category.name}
             {hasSubcategories && (
               <span className="text-xs bg-white/20 text-white px-2 py-1 rounded-full">
@@ -518,7 +527,7 @@ const CategoriesPage = () => {
                 <div className="p-2 bg-blue-600/20 rounded-lg">
                   <Tag className="text-blue-400" size={20} />
                 </div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className={`text-2xl font-bold ${themeColor== "dark" ? `text-white` : "text-black" }`}>
                   Custom Categories
                 </h2>
                 <span className="text-purple-300 text-sm">
@@ -570,7 +579,7 @@ const CategoriesPage = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedCategory && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gradient-to-br from-slate-900 to-purple-900 rounded-2xl border border-white/20 max-w-md w-full p-6 shadow-2xl">
+          <div className={` rounded-2xl border border-white/20 max-w-md w-full p-6 shadow-2xl`}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">Delete Category</h2>
               <button
@@ -668,6 +677,7 @@ const CategoriesPage = () => {
         setShowAddCategoryModal={setShowAddCategoryModal}
         showAddCategoryModal={showAddCategoryModal}
         resetform={resetform}
+        isEdit={isEdit}
       />
     </div>
   );

@@ -16,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Tag,
   TrendingUp,
@@ -58,7 +57,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
 import { darkBackground } from "@/color/DarkMode";
-import { lightBackground } from "@/color/LightMode";
 import { useContext } from "react";
 import { Context } from "@/context/Context";
 
@@ -70,6 +68,7 @@ const CategoryDrawer = ({
   showAddCategoryModal,
   setShowAddCategoryModal,
   resetform,
+  isEdit,
 }) => {
   const iconMap = {
     Utensils,
@@ -123,10 +122,7 @@ const CategoryDrawer = ({
     "slate",
   ];
   const iconOptions = Object.keys(iconMap);
-    const {themeColor} =  useContext(Context)
-  
-
-  console.log(formData, "FORMDATA");
+  const { themeColor } = useContext(Context);
 
   const getParentCategoryOptions = (currentCategoryId = null) => {
     const flattenCategories = (cats, level = 0) => {
@@ -170,6 +166,27 @@ const CategoryDrawer = ({
       fetchCategories();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // Edit category
+  const handleEditCategory = async (e) => {
+    e.preventDefault();
+    try {
+      const categoryData = {
+        ...formData,
+        parentCategory: formData.parentCategory || undefined,
+      };
+
+      const { data } = await api.put(`/categories/${isEdit}`, categoryData);
+      console.log(data), "category update  successfully";
+      if (data.success === true) {
+        setShowAddCategoryModal(false);
+        resetform();
+      }
+      fetchCategories();
+    } catch (err) {
+      console.error(err,"error");
     }
   };
 
@@ -295,14 +312,20 @@ const CategoryDrawer = ({
                     </button>
                   </div>
                 </TransitionChild>
-                <div className={`relative flex h-full flex-col overflow-y-auto  ${themeColor == "dark" ? darkBackground : `bg-gray-400`} py-6 shadow-xl after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-white/10`}>
-                  <div className="px-6 sm:px-10">
+                <div
+                  className={`relative flex h-full flex-col overflow-y-auto  ${
+                    themeColor == "dark" ? darkBackground : `bg-gray-400`
+                  } py-6 shadow-xl after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-white/10`}
+                >
+                  <div className="px-6 sm:px-10 pb-4">
                     <DialogTitle className="text-2xl font-bold text-white">
-                      Add New Category
+                      {isEdit ? "Edit Your Category" : "Add New Category"}
                     </DialogTitle>
                   </div>
                   <form
-                    onSubmit={handleCreateCategory}
+                    onSubmit={
+                      isEdit ? handleEditCategory : handleCreateCategory
+                    }
                     className="px-4 space-y-4"
                   >
                     <div>
@@ -441,12 +464,21 @@ const CategoryDrawer = ({
                       >
                         Cancel
                       </Button>
-                      <Button
-                        type="submit"
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-purple-500/50"
-                      >
-                        Create Category
-                      </Button>
+                      {isEdit ? (
+                        <Button
+                          type="submit"
+                          className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-purple-500/50"
+                        >
+                          Update Category
+                        </Button>
+                      ) : (
+                        <Button
+                          type="submit"
+                          className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-purple-500/50"
+                        >
+                          Create Category
+                        </Button>
+                      )}
                     </div>
                   </form>
                 </div>
