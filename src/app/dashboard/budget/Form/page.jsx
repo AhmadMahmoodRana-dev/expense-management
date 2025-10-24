@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Save, X, Lightbulb, TrendingUp, Calendar, DollarSign, AlertCircle, Copy, Utensils, Car, Zap, Film, Home, ShoppingCart, Heart, Book, Plane, Gift, Coffee, Wifi, Phone, Briefcase } from 'lucide-react';
 
-const CreateEditBudgetPage = () => {
+const BudgetForm = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [applyToFuture, setApplyToFuture] = useState(false);
   const [rolloverUnused, setRolloverUnused] = useState(false);
@@ -98,7 +98,7 @@ const CreateEditBudgetPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-black p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -431,4 +431,4 @@ const CreateEditBudgetPage = () => {
   );
 };
 
-export default CreateEditBudgetPage;
+export default BudgetForm;

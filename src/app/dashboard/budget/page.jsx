@@ -63,7 +63,7 @@ const BudgetsPage = () => {
   const maxValue = Math.max(...budgets.map(b => Math.max(b.budgeted, b.spent)));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-black p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -72,10 +72,10 @@ const BudgetsPage = () => {
               <h1 className="text-4xl font-bold text-white mb-2">Budget Management</h1>
               <p className="text-purple-200">Track and manage your spending limits</p>
             </div>
-            <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-purple-500/50">
+            <a href='/dashboard/budget/form'  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-purple-500/50">
               <Plus size={20} />
               Create New Budget
-            </button>
+            </a>
           </div>
 
           {/* Month Navigation */}

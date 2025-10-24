@@ -1,27 +1,116 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from "react";
-import {Plus,Edit2,Trash2,Lock,Tag,TrendingUp,TrendingDown,Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,X,Loader2,AlertCircle,CheckCircle,ChevronDown,ChevronRight,Folder,FolderOpen} from "lucide-react";
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Lock,
+  Tag,
+  TrendingUp,
+  TrendingDown,
+  Utensils,
+  Car,
+  Zap,
+  Film,
+  Home,
+  ShoppingCart,
+  Heart,
+  Book,
+  Plane,
+  Gift,
+  Coffee,
+  Wifi,
+  Phone,
+  Briefcase,
+  Dumbbell,
+  Music,
+  Palette,
+  Wrench,
+  Baby,
+  PawPrint,
+  Smartphone,
+  Gamepad2,
+  Pizza,
+  GraduationCap,
+  Stethoscope,
+  Bus,
+  Shirt,
+  Building2,
+  X,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  ShieldOff,
+} from "lucide-react";
 import api from "@/lib/axios";
 import CategoryDrawer from "@/components/drawers/CategoryDrawer";
 import { darkBackground, darkTextColor } from "@/color/DarkMode";
 import { lightBackground, lightTextColor } from "@/color/LightMode";
-import { Context } from "@/context/Context";
+import { Context } from "@/context/Context"; 
+import InactiveCategoriesModal from "@/components/category/InactiveCategoriesModal";
 
 const CategoriesPage = () => {
-  const {themeColor} =  useContext(Context)
+  const { themeColor } = useContext(Context);
   const [activeTab, setActiveTab] = useState("expense");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
-  const [isEdit,setIsEdit] = useState(null)
+  const [open, setOpen] = useState(true)
+  
+  const [isEdit, setIsEdit] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
-  const iconMap = {Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingUp,TrendingDown,Tag,Folder,FolderOpen};
-  const [formData, setFormData] = useState({name: "",type: "expense",icon: "Tag",color: "purple",description: "",parentCategory: ""});
+  const iconMap = {
+    Utensils,
+    Car,
+    Zap,
+    Film,
+    Home,
+    ShoppingCart,
+    Heart,
+    Book,
+    Plane,
+    Gift,
+    Coffee,
+    Wifi,
+    Phone,
+    Briefcase,
+    Dumbbell,
+    Music,
+    Palette,
+    Wrench,
+    Baby,
+    PawPrint,
+    Smartphone,
+    Gamepad2,
+    Pizza,
+    GraduationCap,
+    Stethoscope,
+    Bus,
+    Shirt,
+    Building2,
+    TrendingUp,
+    TrendingDown,
+    Tag,
+    Folder,
+    FolderOpen,
+  };
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "expense",
+    icon: "Tag",
+    color: "purple",
+    description: "",
+    parentCategory: "",
+  });
   const resetform = () => {
     setFormData({
       name: "",
@@ -31,23 +120,23 @@ const CategoriesPage = () => {
       description: "",
       parentCategory: "",
     });
-    setIsEdit(null)
+    setIsEdit(null);
   };
 
   // Handle Edit
-  
+
   const handleEdit = (data) => {
-    console.log(data,"EDIT DATA")
+    console.log(data, "EDIT DATA");
     setFormData({
       name: data?.name,
       type: data?.type,
       icon: data?.icon,
       color: data?.color,
-      description:data?.description,
+      description: data?.description,
       parentCategory: data?.parentCategory?._id,
     });
-    setShowAddCategoryModal(!showAddCategoryModal)
-    setIsEdit(data?._id)
+    setShowAddCategoryModal(!showAddCategoryModal);
+    setIsEdit(data?._id);
   };
 
   // Fetch categories with tree structure
@@ -90,9 +179,9 @@ const CategoriesPage = () => {
 
   // Sync formData.type with activeTab
   useEffect(() => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      type: activeTab
+      type: activeTab,
     }));
   }, [activeTab]);
 
@@ -126,6 +215,16 @@ const CategoriesPage = () => {
     setSelectedCategory(category);
     setShowDeleteModal(true);
   };
+
+  const InactivateCategory = async (id) =>{
+    try {
+      const {data} = await api.put(`inactivateCategory/${id}`)
+      console.log("Inactivate DATA",data)
+      fetchCategories()
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const getCategoryColor = (color) => {
     const colors = {
@@ -232,7 +331,9 @@ const CategoriesPage = () => {
     return (
       <div className="mb-2">
         <div
-          className={` ${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-5 border border-white/20 hover:border-${
+          className={` ${
+            themeColor == "dark" ? `bg-white/10` : `bg-gray-200`
+          } backdrop-blur-lg rounded-2xl p-5 border border-white/20 hover:border-${
             category.color
           }-500/50 transition-all hover:shadow-lg hover:shadow-${
             category.color
@@ -263,7 +364,7 @@ const CategoriesPage = () => {
 
             <div className="flex items-center gap-2">
               <button
-              onClick={() => handleEdit(category)}
+                onClick={() => handleEdit(category)}
                 className={`p-2 rounded-lg bg-white/5 hover:bg-white/10 ${
                   isDefault
                     ? "text-purple-400 hover:text-purple-300"
@@ -271,6 +372,16 @@ const CategoriesPage = () => {
                 } transition-colors`}
               >
                 <Edit2 size={16} />
+              </button>
+              <button
+                onClick={() => InactivateCategory(category?._id)}
+                className={`p-2 rounded-lg bg-white/5 hover:bg-white/10 ${
+                  isDefault
+                    ? "text-purple-400 hover:text-purple-300"
+                    : "text-blue-400 hover:text-blue-300"
+                } transition-colors`}
+              >
+                <ShieldOff  size={16} />
               </button>
 
               {isDefault ? (
@@ -291,7 +402,11 @@ const CategoriesPage = () => {
             </div>
           </div>
 
-          <h3 className={`${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} font-semibold mb-3 flex items-center gap-2`}>
+          <h3
+            className={`${
+              themeColor == "dark" ? `${darkTextColor}` : `${lightTextColor}`
+            } font-semibold mb-3 flex items-center gap-2`}
+          >
             {category.name}
             {hasSubcategories && (
               <span className="text-xs bg-white/20 text-white px-2 py-1 rounded-full">
@@ -363,7 +478,11 @@ const CategoriesPage = () => {
   const customCategories = categories.filter((c) => !c.isDefault);
 
   return (
-    <div className={`min-h-screen ${themeColor == "dark" ? darkBackground : lightBackground} p-6`}>
+    <div
+      className={`min-h-screen ${
+        themeColor == "dark" ? darkBackground : lightBackground
+      } p-6`}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Success/Error Messages */}
         {success && (
@@ -384,8 +503,22 @@ const CategoriesPage = () => {
         <div className="mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
-              <h1 className={`text-4xl font-bold ${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`} mb-2`}>Categories</h1>
-              <p className={`${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`}`}>
+              <h1
+                className={`text-4xl font-bold ${
+                  themeColor == "dark"
+                    ? `${darkTextColor}`
+                    : `${lightTextColor}`
+                } mb-2`}
+              >
+                Categories
+              </h1>
+              <p
+                className={`${
+                  themeColor == "dark"
+                    ? `${darkTextColor}`
+                    : `${lightTextColor}`
+                }`}
+              >
                 Manage your expense and income categories with subcategories
               </p>
             </div>
@@ -399,28 +532,47 @@ const CategoriesPage = () => {
           </div>
 
           {/* Tab Switcher */}
-          <div className={`${themeColor == "dark" ? `bg-white/10 border-white/20 `: `bg-gray-200 text-gray-500`} backdrop-blur-lg rounded-2xl p-2 border border-white/20 inline-flex gap-2`}>
-            <button
-              onClick={() => setActiveTab("expense")}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
-                activeTab === "expense"
-                  ? "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg"
-                  : `${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`}  hover:bg-white/5`
-              }`}
+          <div className="flex justify-between">
+            <div
+              className={`${
+                themeColor == "dark"
+                  ? `bg-white/10 border-white/20 `
+                  : `bg-gray-200 text-gray-500`
+              } backdrop-blur-lg rounded-2xl p-2 border border-white/20 inline-flex gap-2`}
             >
-              <TrendingDown size={20} />
-              Expense Categories
-            </button>
-            <button
-              onClick={() => setActiveTab("income")}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
-                activeTab === "income"
-                  ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg"
-                  : `${themeColor == "dark" ? `${darkTextColor}`: `${lightTextColor}`}  hover:bg-white/5`
-              }`}
-            >
-              <TrendingUp size={20} />
-              Income Categories
+              <button
+                onClick={() => setActiveTab("expense")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+                  activeTab === "expense"
+                    ? "bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg"
+                    : `${
+                        themeColor == "dark"
+                          ? `${darkTextColor}`
+                          : `${lightTextColor}`
+                      }  hover:bg-white/5`
+                }`}
+              >
+                <TrendingDown size={20} />
+                Expense Categories
+              </button>
+              <button
+                onClick={() => setActiveTab("income")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+                  activeTab === "income"
+                    ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg"
+                    : `${
+                        themeColor == "dark"
+                          ? `${darkTextColor}`
+                          : `${lightTextColor}`
+                      }  hover:bg-white/5`
+                }`}
+              >
+                <TrendingUp size={20} />
+                Income Categories
+              </button>
+            </div>
+            <button onClick={() => setOpen(!open)} className="text-white bg-white/10 border-white/20 border px-3 py-1 rounded-xl font-semibold">
+              <a className="bg-gradient-to-r hover:from-red-600 hover:to-orange-600 transition-all ease-in-out duration-1000 text-white shadow-lg px-6 py-3 rounded-xl">All Inactive Categories</a>
             </button>
           </div>
         </div>
@@ -434,55 +586,109 @@ const CategoriesPage = () => {
           <>
             {/* Statistics Summary */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
+              <div
+                className={`${
+                  themeColor == "dark" ? `bg-white/10` : `bg-gray-200`
+                } backdrop-blur-lg rounded-2xl p-6 border border-white/20`}
+              >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-purple-600/20 rounded-xl">
                     <Tag className="text-purple-400" size={24} />
                   </div>
                   <div>
-                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>Total Categories</p>
-                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
+                    <p
+                      className={`${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      } text-sm`}
+                    >
+                      Total Categories
+                    </p>
+                    <p
+                      className={`text-3xl font-bold ${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      }`}
+                    >
                       {categories.length}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
+              <div
+                className={`${
+                  themeColor == "dark" ? `bg-white/10` : `bg-gray-200`
+                } backdrop-blur-lg rounded-2xl p-6 border border-white/20`}
+              >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-blue-600/20 rounded-xl">
                     <Lock className="text-blue-400" size={24} />
                   </div>
                   <div>
-                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>
+                    <p
+                      className={`${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      } text-sm`}
+                    >
                       Default Categories
                     </p>
-                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
+                    <p
+                      className={`text-3xl font-bold ${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      }`}
+                    >
                       {defaultCategories.length}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
+              <div
+                className={`${
+                  themeColor == "dark" ? `bg-white/10` : `bg-gray-200`
+                } backdrop-blur-lg rounded-2xl p-6 border border-white/20`}
+              >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-green-600/20 rounded-xl">
                     <Tag className="text-green-400" size={24} />
                   </div>
                   <div>
-                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>Custom Categories</p>
-                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
+                    <p
+                      className={`${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      } text-sm`}
+                    >
+                      Custom Categories
+                    </p>
+                    <p
+                      className={`text-3xl font-bold ${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      }`}
+                    >
                       {customCategories.length}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-6 border border-white/20`}>
+              <div
+                className={`${
+                  themeColor == "dark" ? `bg-white/10` : `bg-gray-200`
+                } backdrop-blur-lg rounded-2xl p-6 border border-white/20`}
+              >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-3 bg-orange-600/20 rounded-xl">
                     <Folder className="text-orange-400" size={24} />
                   </div>
                   <div>
-                    <p className={`${themeColor == "dark" ? `text-white` : `text-gray-500`} text-sm`}>Parent Categories</p>
-                    <p className={`text-3xl font-bold ${themeColor == "dark" ? `text-white` : `text-gray-500`}`}>
+                    <p
+                      className={`${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      } text-sm`}
+                    >
+                      Parent Categories
+                    </p>
+                    <p
+                      className={`text-3xl font-bold ${
+                        themeColor == "dark" ? `text-white` : `text-gray-500`
+                      }`}
+                    >
                       {
                         categories.filter(
                           (cat) =>
@@ -527,7 +733,11 @@ const CategoriesPage = () => {
                 <div className="p-2 bg-blue-600/20 rounded-lg">
                   <Tag className="text-blue-400" size={20} />
                 </div>
-                <h2 className={`text-2xl font-bold ${themeColor== "dark" ? `text-white` : "text-black" }`}>
+                <h2
+                  className={`text-2xl font-bold ${
+                    themeColor == "dark" ? `text-white` : "text-black"
+                  }`}
+                >
                   Custom Categories
                 </h2>
                 <span className="text-purple-300 text-sm">
@@ -546,16 +756,28 @@ const CategoriesPage = () => {
                   ))}
                 </div>
               ) : (
-                <div className={`${themeColor == "dark" ? `bg-white/10` : `bg-gray-200`} backdrop-blur-lg rounded-2xl p-12 border-2 border-dashed border-white/20 text-center`}>
+                <div
+                  className={`${
+                    themeColor == "dark" ? `bg-white/10` : `bg-gray-200`
+                  } backdrop-blur-lg rounded-2xl p-12 border-2 border-dashed border-white/20 text-center`}
+                >
                   <div className="flex flex-col items-center gap-4">
                     <div className="p-4 bg-blue-600/20 rounded-full">
                       <Tag className="text-blue-400" size={48} />
                     </div>
                     <div>
-                      <h3 className={`text-xl font-bold ${themeColor== "dark" ? `text-white` : "text-black" }  mb-2`}>
+                      <h3
+                        className={`text-xl font-bold ${
+                          themeColor == "dark" ? `text-white` : "text-black"
+                        }  mb-2`}
+                      >
                         No Custom Categories Yet
                       </h3>
-                      <p className={` mb-4 ${themeColor== "dark" ? `text-white` : "text-black" }`}>
+                      <p
+                        className={` mb-4 ${
+                          themeColor == "dark" ? `text-white` : "text-black"
+                        }`}
+                      >
                         Create your first custom category to get started
                       </p>
                       <button
@@ -579,7 +801,9 @@ const CategoriesPage = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedCategory && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className={` rounded-2xl border border-white/20 max-w-md w-full p-6 shadow-2xl`}>
+          <div
+            className={` rounded-2xl border border-white/20 max-w-md w-full p-6 shadow-2xl`}
+          >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">Delete Category</h2>
               <button
@@ -679,6 +903,7 @@ const CategoriesPage = () => {
         resetform={resetform}
         isEdit={isEdit}
       />
+      <InactiveCategoriesModal setOpen={setOpen} open={open} />
     </div>
   );
 };
