@@ -1,52 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Plus,
-  Edit2,
-  Trash2,
-  Lock,
-  Tag,
-  TrendingUp,
-  TrendingDown,
-  Utensils,
-  Car,
-  Zap,
-  Film,
-  Home,
-  ShoppingCart,
-  Heart,
-  Book,
-  Plane,
-  Gift,
-  Coffee,
-  Wifi,
-  Phone,
-  Briefcase,
-  Dumbbell,
-  Music,
-  Palette,
-  Wrench,
-  Baby,
-  PawPrint,
-  Smartphone,
-  Gamepad2,
-  Pizza,
-  GraduationCap,
-  Stethoscope,
-  Bus,
-  Shirt,
-  Building2,
-  X,
-  Loader2,
-  AlertCircle,
-  CheckCircle,
-  ChevronDown,
-  ChevronRight,
-  Folder,
-  FolderOpen,
-  ShieldOff,
-} from "lucide-react";
+import {Plus,Edit2,Trash2,Lock,Tag,TrendingUp,TrendingDown,Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,X,Loader2,AlertCircle,CheckCircle,ChevronDown,ChevronRight,Folder,FolderOpen,ShieldOff} from "lucide-react";
 import api from "@/lib/axios";
 import CategoryDrawer from "@/components/drawers/CategoryDrawer";
 import { darkBackground, darkTextColor } from "@/color/DarkMode";
@@ -59,7 +14,7 @@ const CategoriesPage = () => {
   const [activeTab, setActiveTab] = useState("expense");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   
   const [isEdit, setIsEdit] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -68,41 +23,7 @@ const CategoriesPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
-  const iconMap = {
-    Utensils,
-    Car,
-    Zap,
-    Film,
-    Home,
-    ShoppingCart,
-    Heart,
-    Book,
-    Plane,
-    Gift,
-    Coffee,
-    Wifi,
-    Phone,
-    Briefcase,
-    Dumbbell,
-    Music,
-    Palette,
-    Wrench,
-    Baby,
-    PawPrint,
-    Smartphone,
-    Gamepad2,
-    Pizza,
-    GraduationCap,
-    Stethoscope,
-    Bus,
-    Shirt,
-    Building2,
-    TrendingUp,
-    TrendingDown,
-    Tag,
-    Folder,
-    FolderOpen,
-  };
+  const iconMap = {Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingUp,TrendingDown,Tag,Folder,FolderOpen};
   const [formData, setFormData] = useState({
     name: "",
     type: "expense",
