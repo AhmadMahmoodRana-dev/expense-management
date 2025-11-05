@@ -3,33 +3,14 @@ import { X, AlertCircle, CheckCircle } from "lucide-react"
 import * as LucideIcons from 'lucide-react'
 import api from '@/lib/axios'
 
-const InactiveCategoriesModal = ({setOpen,open}) => {
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(true)
+const InactiveCategoriesModal = ({setOpen,open,loading, inactiveCategories,setInactiveCategories}) => {
   const [error, setError] = useState(null)
   const [activating, setActivating] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
 
-  useEffect(() => {
-    fetchInactiveCategories()
-  }, [])
 
-  const fetchInactiveCategories = async () => {
-    try {
-      setLoading(true)
-      const {data} = await api.get('/allCategories')
 
-      if (data.success) {
-        setCategories(data.data)
-      } else {
-        setError('Failed to load categories')
-      }
-    } catch (err) {
-      setError('Error fetching categories: ' + err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+
 
   const handleActivate = async (categoryId) => {
     try {
@@ -42,7 +23,7 @@ const InactiveCategoriesModal = ({setOpen,open}) => {
       
       if (response.status) {
         // Remove the activated category from the list
-        setCategories(categories.filter(cat => cat._id !== categoryId))
+        setInactiveCategories(inactiveCategories.filter(cat => cat._id !== categoryId))
         setSuccessMessage('Category activated successfully!')
         
         // Clear success message after 3 seconds
@@ -129,13 +110,13 @@ const InactiveCategoriesModal = ({setOpen,open}) => {
                 <div className="flex justify-center py-12">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-indigo-600"></div>
                 </div>
-              ) : categories.length === 0 ? (
+              ) : inactiveCategories.length === 0 ? (
                 <div className="py-12 text-center">
                   <p className="text-white">No inactive categories found</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {categories.map((category) => (
+                  {inactiveCategories.map((category) => (
                     <div
                       key={category._id}
                       className="flex items-center justify-between rounded-lg border border-white/20 p-4 hover:border-gray-300 transition-colors"

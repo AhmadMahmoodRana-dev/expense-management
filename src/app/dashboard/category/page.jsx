@@ -16,6 +16,8 @@ const CategoriesPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [open, setOpen] = useState(false)
+  const [inactiveCategories, setInactiveCategories] = useState([])
+
   
   const [isEdit, setIsEdit] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -25,14 +27,7 @@ const CategoriesPage = () => {
   const [success, setSuccess] = useState(null);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
   const iconMap = {Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingUp,TrendingDown,Tag,Folder,FolderOpen};
-  const [formData, setFormData] = useState({
-    name: "",
-    type: "expense",
-    icon: "Tag",
-    color: "purple",
-    description: "",
-    parentCategory: "",
-  });
+  const [formData, setFormData] = useState({name: "",type: "expense",icon: "Tag",color: "purple",description: "",parentCategory: ""});
   const resetform = () => {
     setFormData({
       name: "",
@@ -44,6 +39,26 @@ const CategoriesPage = () => {
     });
     setIsEdit(null);
   };
+
+  // INACTIVE CATEGORY FETCH FUNCTION
+
+    const fetchInactiveCategories = async () => {
+      try {
+        setLoading(true)
+        const {data} = await api.get('/allCategories')
+        console.log("data",data)
+        if (data.success) {
+          setInactiveCategories(data.data)
+          fetchCategories()
+        } else {
+          setError('Failed to load categories')
+        }
+      } catch (err) {
+        setError('Error fetching categories: ' + err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
 
   // Handle Edit
 
@@ -143,6 +158,7 @@ const CategoriesPage = () => {
       const {data} = await api.put(`inactivateCategory/${id}`)
       console.log("Inactivate DATA",data)
       fetchCategories()
+      fetchInactiveCategories()
     } catch (error) {
       console.error(error)
     }
@@ -726,17 +742,8 @@ const CategoriesPage = () => {
           </div>
         </div>
       )}
-      <CategoryDrawer
-        fetchCategories={fetchCategories}
-        categories={categories}
-        setFormData={setFormData}
-        formData={formData}
-        setShowAddCategoryModal={setShowAddCategoryModal}
-        showAddCategoryModal={showAddCategoryModal}
-        resetform={resetform}
-        isEdit={isEdit}
-      />
-      <InactiveCategoriesModal setOpen={setOpen} open={open} />
+      <CategoryDrawer fetchCategories={fetchCategories} categories={categories} setFormData={setFormData} formData={formData} setShowAddCategoryModal={setShowAddCategoryModal} showAddCategoryModal={showAddCategoryModal} resetform={resetform} isEdit={isEdit} />
+      <InactiveCategoriesModal setOpen={setOpen} open={open} inactiveCategories={inactiveCategories} loading={loading} setInactiveCategories={setInactiveCategories} />
     </div>
   );
 };

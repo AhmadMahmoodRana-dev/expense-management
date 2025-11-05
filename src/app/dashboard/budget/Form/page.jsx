@@ -15,20 +15,18 @@ const BudgetForm = () => {
   const [errors, setErrors] = useState({});
   const iconMap = {Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingUp,TrendingDown,Tag,Folder,FolderOpen};
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        setLoading(true);
-        const { data } = await api.get("/categories/expense"); // your API endpoint
+        const { data } = await api.get("/categories/expense"); 
         console.log("categoryExpense", data);
         const merged = data.data?.map((item, index) => {
           const config = iconMap[item.name] || {};
           return {
             id: index + 1,
             name: item._id,
-            icon: config.icon || <Gift size={20} />, // fallback icon
+            icon: config.icon || <Gift size={20} />, 
             color: config.color || "gray",
             amount: 0, // user will set
             enabled: true,
@@ -39,9 +37,7 @@ const BudgetForm = () => {
         setCategories(merged);
       } catch (error) {
         console.error("Error fetching categories:", error);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
     fetchCategories();
@@ -102,11 +98,8 @@ const BudgetForm = () => {
   const apply50_30_20Rule = () => {
     const needs = monthlyIncome * 0.5;
     const wants = monthlyIncome * 0.3;
-    const savings = monthlyIncome * 0.2;
-
     const needsCategories = [1, 2, 3, 5, 7, 12];
     const wantsCategories = [4, 6, 8, 9, 10, 11];
-
     const needsPerCategory = needs / needsCategories.length;
     const wantsPerCategory = wants / wantsCategories.length;
 
@@ -149,52 +142,26 @@ const BudgetForm = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      // Scroll to first error
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     const formData = {
-  name: `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`,
-  month: currentMonth.getMonth() + 1, // store month as a number
-  year: currentMonth.getFullYear(),
-  totalBudget,
-  rolloverUnused,
-  alertThreshold: 80, // backend expects this
-  applyToFuture,
-  categories: categories
+    name: `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`,
+    month: currentMonth.getMonth() + 1, 
+    year: currentMonth.getFullYear(),
+    totalBudget,
+    rolloverUnused,
+    alertThreshold: 80,
+    applyToFuture,
+    categories: categories
     .filter((c) => c.enabled)
     .map((c) => ({
-      category: c.name, // backend expects category reference (id or name)
+      category: c.name,
       budgetAmount: c.amount,
       spentAmount: 0,
       isActive: true,
     })),
 };
-
-
-    // const formData = {
-    //   month: currentMonth.toISOString(),
-    //   name: `${
-    //     monthNames[currentMonth.getMonth()]
-    //   } ${currentMonth.getFullYear()}`,
-    //   monthlyIncome,
-    //   totalBudget,
-    //   remaining,
-    //   percentageOfIncome,
-    //   applyToFuture,
-    //   rolloverUnused,
-    //   savingsAllocation: rolloverUnused ? savingsAllocation : 0,
-    //   categories: categories
-    //     .filter((c) => c.enabled)
-    //     .map((c) => ({
-    //       id: c.id,
-    //       name: c.name,
-    //       amount: c.amount,
-    //       color: c.color,
-    //     })),
-    //   createdAt: new Date().toISOString(),
-    // };
-
     try {
       const {data} = await api.post(`/add_budget`,formData);
       console.log(data,"send budget")
