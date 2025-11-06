@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {ChevronLeft,ChevronRight,Save,X,Lightbulb,TrendingUp,Calendar,DollarSign,AlertCircle,Copy,Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,CheckCircle,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingDown,Tag,Folder,FolderOpen} from "lucide-react";
 import getCategoryColor from "@/color/getCategoryColor";
 import api from "@/lib/axios";
+import { toast } from "react-toastify";
 
 const BudgetForm = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -15,6 +16,8 @@ const BudgetForm = () => {
   const [errors, setErrors] = useState({});
   const iconMap = {Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingUp,TrendingDown,Tag,Folder,FolderOpen};
   const [categories, setCategories] = useState([]);
+
+  console.log("CURRENT MONTH",currentMonth.getMonth() + 1)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -162,15 +165,18 @@ const BudgetForm = () => {
       isActive: true,
     })),
 };
+console.log("FORM DATA",formData);
     try {
       const {data} = await api.post(`/add_budget`,formData);
       console.log(data,"send budget")
+      toast.success("Budget saved successfully!");
     } catch (error) {
+      toast.error(error?.response?.data?.message)
       console.error(error)
     }
     console.log("Budget Form Submitted:", formData);
 
-    setShowSuccess(true);
+    // setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
