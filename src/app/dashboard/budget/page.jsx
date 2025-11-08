@@ -2,17 +2,19 @@
 
 import React, { useEffect, useState } from "react";
 import api from "@/lib/axios";
-import {BarChart3,Calendar,Target,ChevronLeft,AlertTriangle,Plus,Edit2,Trash2,Tag,TrendingUp,TrendingDown,Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,ChevronRight,Folder,FolderOpen} from "lucide-react";
+import {BarChart3,Calendar,Target,ChevronLeft,AlertTriangle,Plus,Edit2,Trash2,Tag,TrendingUp,TrendingDown,Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,ChevronRight,Folder,FolderOpen,Bell,X} from "lucide-react";
+import BudgetCard from "../../../components/budget/BudgetCard";
 
 const BudgetsPage = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedHistory, setSelectedHistory] = useState("current");
   const [currentMonthBudgetData, setCurrentMonthBudgetData] = useState([]);
   const [currentMonthSummaryData, setCurrentMonthSummaryData] = useState({});
+  const [alerts, setAlerts] = useState([]);
+  const [showAlerts, setShowAlerts] = useState(false);
   const [loading, setLoading] = useState(true);
-  
   const iconMap = {Utensils,Car,Zap,Film,Home,ShoppingCart,Heart,Book,Plane,Gift,Coffee,Wifi,Phone,Briefcase,Dumbbell,Music,Palette,Wrench,Baby,PawPrint,Smartphone,Gamepad2,Pizza,GraduationCap,Stethoscope,Bus,Shirt,Building2,TrendingUp,TrendingDown,Tag,Folder,FolderOpen};
-  
+  const [budgetId,setBudgetId] = useState("")
+
   const renderIcon = (iconName) => {
     const IconComponent = iconMap[iconName];
     return IconComponent ? <IconComponent size={20} /> : <Tag size={20} />;
@@ -29,6 +31,7 @@ const BudgetsPage = () => {
       );
       console.log("Fetched current month budget data:", data);
       setCurrentMonthBudgetData(data?.data?.budgets || []);
+      setBudgetId(data?.data?.budgets[0]?._id || "")
       setCurrentMonthSummaryData(data?.data?.summary || {});
     } catch (error) {
       console.error("Error fetching current month budget:", error);
@@ -39,9 +42,30 @@ const BudgetsPage = () => {
     }
   };
 
+  const fetchBudgetAlerts = async (budgetId) => {
+    try {
+      const { data } = await api.get(`/${budgetId}/alerts`);
+      if (data.success && data.data.hasAlerts) {
+        setAlerts(data.data.alerts);
+        setShowAlerts(true);
+      }
+    } catch (error) {
+      console.error("Error fetching budget alerts:", error);
+    }
+  };
+
+ 
+
   useEffect(() => {
     fetchCurrentMonthBudget();
   }, [currentMonth]);
+
+  useEffect(() => {
+    // Check for alerts when budgets are loaded
+    if (currentMonthBudgetData.length > 0) {
+      fetchBudgetAlerts(currentMonthBudgetData[0]._id);
+    }
+  }, [currentMonthBudgetData]);
 
   const getCategoryColor = (color) => {
     const colors = {
@@ -105,45 +129,60 @@ const BudgetsPage = () => {
   };
 
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)));
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+    );
   };
 
   const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)));
+    setCurrentMonth(
+      new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+    );
   };
 
-  // Get categories from first budget (if exists)
   const categories = currentMonthBudgetData[0]?.categories || [];
-  
-  // Calculate stats for insights
-  const underBudgetCount = categories.filter(c => {
+
+  const underBudgetCount = categories.filter((c) => {
     const percentage = (c.spentAmount / c.budgetAmount) * 100;
     return percentage < 90;
   }).length;
 
-  const nearLimitCount = categories.filter(c => {
+  const nearLimitCount = categories.filter((c) => {
     const percentage = (c.spentAmount / c.budgetAmount) * 100;
     return percentage >= 90 && percentage < 100;
   }).length;
 
-  const overBudgetCount = categories.filter(c => {
+  const overBudgetCount = categories.filter((c) => {
     const percentage = (c.spentAmount / c.budgetAmount) * 100;
     return percentage >= 100;
   }).length;
 
   const maxValue = Math.max(
-    ...(categories.map(b => Math.max(b.budgetAmount || 0, b.spentAmount || 0))),
+    ...categories.map((b) => Math.max(b.budgetAmount || 0, b.spentAmount || 0)),
     1
   );
 
-  const overallPercentage = currentMonthSummaryData?.totalBudget > 0 
-    ? (currentMonthSummaryData?.totalSpent / currentMonthSummaryData?.totalBudget) * 100
-    : 0;
+  const overallPercentage =
+    currentMonthSummaryData?.totalBudget > 0
+      ? (currentMonthSummaryData?.totalSpent /
+          currentMonthSummaryData?.totalBudget) *
+        100
+      : 0;
 
   if (loading) {
     return (
@@ -156,6 +195,69 @@ const BudgetsPage = () => {
   return (
     <div className="min-h-screen bg-black p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Alerts Modal */}
+        {showAlerts && alerts.length > 0 && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-black border-2 border-yellow-500/50 rounded-2xl p-6 max-w-md w-full shadow-2xl shadow-yellow-500/20">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-black rounded-xl">
+                    <Bell className="text-yellow-400" size={24} />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">
+                    Budget Alerts
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setShowAlerts(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <X className="text-gray-400" size={20} />
+                </button>
+              </div>
+              <div className="space-y-3">
+                {alerts.map((alert, index) => (
+                  <div
+                    key={index}
+                    className={`p-4 rounded-xl border ${
+                      alert.severity === "high"
+                        ? "bg-red-500/10 border-red-500/30"
+                        : "bg-yellow-500/10 border-yellow-500/30"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle
+                        className={
+                          alert.severity === "high"
+                            ? "text-red-400"
+                            : "text-yellow-400"
+                        }
+                        size={20}
+                      />
+                      <div className="flex-1">
+                        <p
+                          className={`font-medium ${
+                            alert.severity === "high"
+                              ? "text-red-300"
+                              : "text-yellow-300"
+                          }`}
+                        >
+                          {alert.type === "overall"
+                            ? "Overall Budget"
+                            : alert.category}
+                        </p>
+                        <p className="text-gray-300 text-sm mt-1">
+                          {alert.message}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
@@ -167,13 +269,27 @@ const BudgetsPage = () => {
                 Track and manage your spending limits
               </p>
             </div>
-            <a
-              href="/dashboard/budget/form"
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-purple-500/50"
-            >
-              <Plus size={20} />
-              Create New Budget
-            </a>
+            <div className="flex gap-3">
+              {alerts.length > 0 && (
+                <button
+                  onClick={() => setShowAlerts(true)}
+                  className="bg-yellow-600/20 hover:bg-yellow-600/30 border border-yellow-500/50 text-yellow-400 px-6 py-3 rounded-xl flex items-center gap-2 transition-all relative"
+                >
+                  <Bell size={20} />
+                  <span className="font-medium">Alerts</span>
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                    {alerts.length}
+                  </span>
+                </button>
+              )}
+              <a
+                href="/dashboard/budget/form"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-purple-500/50"
+              >
+                <Plus size={20} />
+                Create New Budget
+              </a>
+            </div>
           </div>
 
           {/* Month Navigation */}
@@ -188,7 +304,8 @@ const BudgetsPage = () => {
               <div className="flex items-center gap-3">
                 <Calendar className="text-purple-400" size={24} />
                 <h2 className="text-2xl font-bold text-white">
-                  {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+                  {monthNames[currentMonth.getMonth()]}{" "}
+                  {currentMonth.getFullYear()}
                 </h2>
               </div>
               <button
@@ -228,7 +345,9 @@ const BudgetsPage = () => {
               <p className="text-purple-200 text-sm mb-1">Remaining</p>
               <p
                 className={`text-3xl font-bold ${
-                  (currentMonthSummaryData?.remaining || 0) >= 0 ? "text-green-400" : "text-red-400"
+                  (currentMonthSummaryData?.remaining || 0) >= 0
+                    ? "text-green-400"
+                    : "text-red-400"
                 }`}
               >
                 ${(currentMonthSummaryData?.remaining || 0).toFixed(2)}
@@ -244,7 +363,9 @@ const BudgetsPage = () => {
             </div>
             <div className="w-full bg-white/10 rounded-full h-4 overflow-hidden">
               <div
-                className={`h-full ${getProgressBarColor(overallPercentage)} transition-all duration-500 rounded-full`}
+                className={`h-full ${getProgressBarColor(
+                  overallPercentage
+                )} transition-all duration-500 rounded-full`}
                 style={{ width: `${Math.min(overallPercentage, 100)}%` }}
               />
             </div>
@@ -252,7 +373,8 @@ const BudgetsPage = () => {
               <div className="flex items-center gap-2 mt-3 text-yellow-400">
                 <AlertTriangle size={16} />
                 <span className="text-sm">
-                  You've used {overallPercentage.toFixed(0)}% of your total budget
+                  You've used {overallPercentage.toFixed(0)}% of your total
+                  budget
                 </span>
               </div>
             )}
@@ -260,110 +382,18 @@ const BudgetsPage = () => {
         </div>
 
         {/* Budget Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+        <div>
           {categories.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <p className="text-gray-400 text-lg">No budgets found for this month</p>
-              <p className="text-gray-500 text-sm mt-2">Create a new budget to get started</p>
+              <p className="text-gray-400 text-lg">
+                No budgets found for this month
+              </p>
+              <p className="text-gray-500 text-sm mt-2">
+                Create a new budget to get started
+              </p>
             </div>
           ) : (
-            categories.map((budget) => {
-              const colors = getCategoryColor(budget?.category?.color);
-              const remaining = budget.budgetAmount - budget.spentAmount;
-              const percentage = (budget.spentAmount / budget.budgetAmount) * 100;
-
-              return (
-                <div
-                  key={budget._id}
-                  className="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/20 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-500/20"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div
-                      className={`p-3 rounded-xl border ${colors.bg} ${colors.border}`}
-                    >
-                      <div className={colors.text}>{renderIcon(budget.category?.icon)}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-purple-400 hover:text-purple-300 transition-colors">
-                        <Edit2 size={16} />
-                      </button>
-                      <button className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-red-400 hover:text-red-300 transition-colors">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <h3 className="text-white font-semibold mb-4">
-                    {budget.category?.name}
-                  </h3>
-
-                  <div className="space-y-3 mb-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400 text-sm">Budgeted</span>
-                      <span className="text-white font-semibold">
-                        ${budget.budgetAmount.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400 text-sm">Spent</span>
-                      <span
-                        className={`font-semibold ${
-                          percentage >= 100 ? "text-red-400" : "text-orange-400"
-                        }`}
-                      >
-                        ${budget.spentAmount.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400 text-sm">Remaining</span>
-                      <span
-                        className={`font-semibold ${
-                          remaining >= 0 ? "text-green-400" : "text-red-400"
-                        }`}
-                      >
-                        ${Math.abs(remaining).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-400 text-xs">Progress</span>
-                      <span
-                        className={`text-xs font-semibold ${
-                          percentage >= 100
-                            ? "text-red-400"
-                            : percentage >= 90
-                            ? "text-yellow-400"
-                            : "text-green-400"
-                        }`}
-                      >
-                        {percentage.toFixed(0)}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                      <div
-                        className={`h-full ${getProgressBarColor(percentage)} transition-all duration-500`}
-                        style={{ width: `${Math.min(percentage, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {percentage >= 100 && (
-                    <div className="flex items-center gap-2 mt-3 text-red-400 bg-red-500/10 px-3 py-2 rounded-lg">
-                      <AlertTriangle size={14} />
-                      <span className="text-xs font-medium">Budget exceeded!</span>
-                    </div>
-                  )}
-                  {percentage >= 90 && percentage < 100 && (
-                    <div className="flex items-center gap-2 mt-3 text-yellow-400 bg-yellow-500/10 px-3 py-2 rounded-lg">
-                      <AlertTriangle size={14} />
-                      <span className="text-xs font-medium">Nearing limit</span>
-                    </div>
-                  )}
-                </div>
-              );
-            })
+            <BudgetCard mockBudget={categories} renderIcon={renderIcon} budgetId={budgetId} fetchCurrentMonthBudget={fetchCurrentMonthBudget} />
           )}
         </div>
 
@@ -374,7 +404,9 @@ const BudgetsPage = () => {
               <div className="p-3 bg-purple-600/20 rounded-xl">
                 <BarChart3 className="text-purple-400" size={24} />
               </div>
-              <h2 className="text-2xl font-bold text-white">Budget Analytics</h2>
+              <h2 className="text-2xl font-bold text-white">
+                Budget Analytics
+              </h2>
             </div>
 
             {/* Bar Chart */}
@@ -396,7 +428,6 @@ const BudgetsPage = () => {
                         </span>
                         <div className="flex-1 mx-4">
                           <div className="relative h-8">
-                            {/* Budgeted bar (background) */}
                             <div
                               className="absolute top-0 bg-white/10 rounded-lg h-8 flex items-center justify-end px-2"
                               style={{ width: `${budgetBar}%` }}
@@ -405,7 +436,6 @@ const BudgetsPage = () => {
                                 ${data.budgetAmount}
                               </span>
                             </div>
-                            {/* Spent bar (foreground) */}
                             <div
                               className={`absolute top-0 ${
                                 isOver ? "bg-red-500" : "bg-green-500"
@@ -423,7 +453,11 @@ const BudgetsPage = () => {
                             isOver ? "text-red-400" : "text-green-400"
                           }`}
                         >
-                          {((data.spentAmount / data.budgetAmount) * 100).toFixed(0)}%
+                          {(
+                            (data.spentAmount / data.budgetAmount) *
+                            100
+                          ).toFixed(0)}
+                          %
                         </span>
                       </div>
                     </div>
@@ -450,7 +484,9 @@ const BudgetsPage = () => {
 
             {/* Spending Trends */}
             <div className="mt-6 pt-6 border-t border-white/10">
-              <h3 className="text-white font-semibold mb-4">Spending Insights</h3>
+              <h3 className="text-white font-semibold mb-4">
+                Spending Insights
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-green-500/10 rounded-xl p-4 border border-green-500/30">
                   <div className="flex items-center gap-2 mb-2">
@@ -496,23 +532,13 @@ const BudgetsPage = () => {
         {/* Budget History */}
         {categories.length > 0 && (
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-600/20 rounded-xl">
-                  <Calendar className="text-blue-400" size={24} />
-                </div>
-                <h2 className="text-2xl font-bold text-white">Budget History</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 bg-blue-600/20 rounded-xl">
+                <Calendar className="text-blue-400" size={24} />
               </div>
-              <select
-                value={selectedHistory}
-                onChange={(e) => setSelectedHistory(e.target.value)}
-                className="bg-white/5 border border-white/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-500"
-              >
-                <option value="current">Current Month</option>
-                <option value="last1">Last Month</option>
-                <option value="last2">2 Months Ago</option>
-                <option value="last3">3 Months Ago</option>
-              </select>
+              <h2 className="text-2xl font-bold text-white">
+                Category Breakdown
+              </h2>
             </div>
 
             <div className="overflow-x-auto">
@@ -539,9 +565,10 @@ const BudgetsPage = () => {
                 <tbody>
                   {categories.map((budget) => {
                     const difference = budget.budgetAmount - budget.spentAmount;
-                    const percentage = (budget.spentAmount / budget.budgetAmount) * 100;
+                    const percentage =
+                      (budget.spentAmount / budget.budgetAmount) * 100;
                     const colors = getCategoryColor(budget.category?.color);
-                    
+
                     return (
                       <tr
                         key={budget._id}
