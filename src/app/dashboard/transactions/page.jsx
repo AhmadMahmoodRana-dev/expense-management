@@ -120,7 +120,7 @@ const page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br bg-black p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -239,10 +239,10 @@ const page = () => {
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 mb-4">
           <div className="flex flex-wrap gap-3 justify-between items-center">
             <div className="flex flex-wrap gap-3">
-              <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl flex items-center gap-2 transition-colors">
+              <a href='/dashboard/transactions/Form' className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl flex items-center gap-2 transition-colors">
                 <Plus size={20} />
                 Add Transaction
-              </button>
+              </a>
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl flex items-center gap-2 transition-colors">
                 <Upload size={20} />
                 Import CSV
